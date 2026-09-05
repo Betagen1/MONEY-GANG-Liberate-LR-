@@ -385,8 +385,8 @@
                             <input id="searchInput" oninput="renderTable()" type="text" placeholder="ค้นหาชื่อสมาชิก..." class="w-full pl-9 pr-4 py-2 bg-slate-950/80 border border-slate-800 rounded-2xl text-xs text-white focus:outline-none focus:border-sky-500 transition">
                         </div>
 
-                        <button onclick="loadData()" class="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-2xl text-xs font-semibold transition border border-slate-700">
-                            <i class="fa-solid fa-rotate-right"></i>
+                        <button id="refreshBtn" onclick="manualRefresh()" title="รีเฟรชข้อมูล" class="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-2xl text-xs font-semibold transition border border-slate-700 flex items-center justify-center">
+                            <i id="refreshIcon" class="fa-solid fa-rotate-right"></i>
                         </button>
                     </div>
                 </div>
@@ -514,6 +514,7 @@
         let selectedTargetUser = null;
         let currentFilter = 'ALL';
         let currentLogFilter = 'ALL';
+        let autoRefreshInterval = null;
 
         // 🛡️ ป้องกัน XSS
         function escapeHTML(str) {
@@ -569,7 +570,10 @@
             }
         }
 
-        async function loadData() {
+        async function loadData(showLoading = false) {
+            const refreshIcon = document.getElementById('refreshIcon');
+            if (showLoading && refreshIcon) refreshIcon.classList.add('fa-spin');
+
             try {
                 const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
                     headers: { 'X-Master-Key': JSONBIN_KEY }
@@ -586,8 +590,10 @@
                 const savedWebhook = appData.discordWebhook || localStorage.getItem('DISCORD_WEBHOOK') || '';
                 const savedRoleId = appData.discordRoleId || localStorage.getItem('DISCORD_ROLE_ID') || '';
 
-                document.getElementById('discordWebhookInput').value = savedWebhook;
-                document.getElementById('discordRoleIdInput').value = savedRoleId;
+                const webhookInput = document.getElementById('discordWebhookInput');
+                const roleIdInput = document.getElementById('discordRoleIdInput');
+                if (webhookInput) webhookInput.value = savedWebhook;
+                if (roleIdInput) roleIdInput.value = savedRoleId;
                 
                 updateStats();
                 updateLeaderboard();
@@ -598,7 +604,30 @@
                 renderExpenseTable();
                 renderMemberList();
                 renderAuditLogs();
-            } catch (e) { console.error('Fetch Error:', e); }
+            } catch (e) { 
+                console.error('Fetch Error:', e); 
+            } finally {
+                if (showLoading && refreshIcon) {
+                    setTimeout(() => refreshIcon.classList.remove('fa-spin'), 500);
+                }
+            }
+        }
+
+        async function manualRefresh() {
+            const btn = document.getElementById('refreshBtn');
+            btn.disabled = true;
+            await loadData(true);
+            btn.disabled = false;
+        }
+
+        function startAutoRefresh() {
+            if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+            // ดึงข้อมูลอัตโนมัติทุกๆ 10 วินาที
+            autoRefreshInterval = setInterval(() => {
+                if (currentUser) {
+                    loadData(false);
+                }
+            }, 10000);
         }
 
         async function saveData() {
@@ -704,10 +733,16 @@
                 renderExpenseTable();
                 renderMemberList();
                 renderAuditLogs();
+
+                // เริ่มต้นการดึงข้อมูลอัตโนมัติ
+                startAutoRefresh();
             } else { alert('Username หรือ Password ไม่ถูกต้อง'); }
         }
 
-        function logout() { location.reload(); }
+        function logout() { 
+            if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+            location.reload(); 
+        }
 
         async function addExpense() {
             if (currentUser.role !== 'OWNER' && currentUser.role !== 'ADMIN') return;
