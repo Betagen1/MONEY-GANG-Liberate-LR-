@@ -47,6 +47,11 @@
             </div>
 
             <div id="userInfoNav" class="hidden items-center gap-3">
+                <!-- ปุ่มรีเฟรชหน้าเว็บส่วนหัว -->
+                <button id="refreshHeaderBtn" onclick="manualRefresh()" title="รีเฟรชข้อมูลหน้าเว็บ" class="p-2.5 bg-slate-900 hover:bg-slate-800 text-sky-400 rounded-2xl border border-slate-800 transition flex items-center justify-center">
+                    <i id="navRefreshIcon" class="fa-solid fa-rotate-right text-sm"></i>
+                </button>
+
                 <button id="adminNotifBtn" onclick="openPendingUsersModal()" class="hidden relative p-2.5 bg-slate-900 hover:bg-slate-800 text-amber-400 rounded-2xl border border-slate-800 transition">
                     <i class="fa-solid fa-bell text-sm"></i>
                     <span id="notifBadge" class="hidden absolute -top-1 -right-1 bg-rose-500 text-white text-[9px] font-black w-5 h-5 rounded-full flex items-center justify-center animate-bounce shadow-md">0</span>
@@ -149,7 +154,8 @@
                 </div>
                 
                 <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
-                    <button onclick="sendDiscordNotification()" class="flex-1 md:flex-none bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-400/30 px-4 py-2.5 rounded-2xl font-bold text-xs transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20">
+                    <!-- ปุ่มส่งทวงหนี้: แสดงเฉพาะ ADMIN และ OWNER เท่านั้น -->
+                    <button id="btnSendDebtDiscord" onclick="sendDiscordNotification()" class="hidden flex-1 md:flex-none bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-400/30 px-4 py-2.5 rounded-2xl font-bold text-xs transition items-center justify-center gap-2 shadow-lg shadow-indigo-600/20">
                         <i class="fa-brands fa-discord text-sm"></i> ส่งทวงหนี้ลง Discord
                     </button>
                     <button onclick="sendDiscordAuditReport()" class="flex-1 md:flex-none bg-purple-600 hover:bg-purple-500 text-white border border-purple-400/30 px-4 py-2.5 rounded-2xl font-bold text-xs transition flex items-center justify-center gap-2 shadow-lg shadow-purple-600/20">
@@ -297,12 +303,51 @@
                     </button>
                 </div>
 
-                <div class="glass-card rounded-3xl border border-amber-500/30 p-6 shadow-xl">
-                    <div class="flex justify-between items-center mb-5">
-                        <h3 class="text-sm font-bold text-amber-400 flex items-center gap-2">
-                            <i class="fa-solid fa-users-gear"></i> จัดการสมาชิกทั้งหมดในระบบ (ADMIN/OWNER)
-                        </h3>
-                        <span class="text-xs text-slate-500">ปรับยศ / ลบสมาชิกออกจากแก๊ง</span>
+                <!-- 👑 แผงจัดการ User รูปแบบใหม่ (Interactive & Dashboard Style) -->
+                <div class="glass-card rounded-3xl border border-amber-500/30 p-6 shadow-xl space-y-5">
+                    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+                        <div>
+                            <h3 class="text-sm font-bold text-amber-400 flex items-center gap-2">
+                                <i class="fa-solid fa-users-gear"></i> ระบบจัดการสิทธิ์สมาชิก & ยศตกแต่ง (USER MANAGEMENT)
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-0.5">อนุมัติสมาชิก กำหนดสิทธิ์ Admin/Owner และตกแต่งยศฉายาแก๊ง</p>
+                        </div>
+                        
+                        <!-- ช่องค้นหา & กรองสิทธิ์ผู้ใช้งาน -->
+                        <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+                            <div class="relative flex-1 sm:w-48">
+                                <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-500 text-xs"></i>
+                                <input id="memberSearchInput" oninput="renderMemberList()" type="text" placeholder="ค้นหาสมาชิก..." class="w-full pl-8 pr-3 py-1.5 bg-slate-950/80 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500 transition">
+                            </div>
+                            
+                            <select id="memberRoleFilter" onchange="renderMemberList()" class="p-1.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-amber-300 focus:outline-none">
+                                <option value="ALL">ทุกระดับสิทธิ์</option>
+                                <option value="OWNER">👑 OWNER</option>
+                                <option value="ADMIN">🛡️ ADMIN</option>
+                                <option value="USER">👤 USER</option>
+                                <option value="PENDING">⏳ PENDING</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- การ์ดแสดงสัดส่วนยศสมาชิก (Dashboard Cards) -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <div class="p-3 bg-slate-950/60 rounded-2xl border border-amber-500/20 text-center">
+                            <p class="text-[10px] text-amber-400 font-bold uppercase">👑 Owners</p>
+                            <p id="countOwner" class="text-lg font-black text-white mt-0.5">0</p>
+                        </div>
+                        <div class="p-3 bg-slate-950/60 rounded-2xl border border-indigo-500/20 text-center">
+                            <p class="text-[10px] text-indigo-400 font-bold uppercase">🛡️ Admins</p>
+                            <p id="countAdmin" class="text-lg font-black text-white mt-0.5">0</p>
+                        </div>
+                        <div class="p-3 bg-slate-950/60 rounded-2xl border border-sky-500/20 text-center">
+                            <p class="text-[10px] text-sky-400 font-bold uppercase">👤 Users</p>
+                            <p id="countUser" class="text-lg font-black text-white mt-0.5">0</p>
+                        </div>
+                        <div class="p-3 bg-slate-950/60 rounded-2xl border border-rose-500/20 text-center">
+                            <p class="text-[10px] text-rose-400 font-bold uppercase">⏳ Pending</p>
+                            <p id="countPending" class="text-lg font-black text-white mt-0.5">0</p>
+                        </div>
                     </div>
 
                     <div class="overflow-x-auto custom-scrollbar">
@@ -312,9 +357,9 @@
                                     <th class="p-3.5 text-center w-12">#</th>
                                     <th class="p-3.5">ชื่อที่แสดง</th>
                                     <th class="p-3.5">Username</th>
-                                    <th class="p-3.5">ระดับสิทธิ์ (Role)</th>
+                                    <th class="p-3.5">ระดับสิทธิ์</th>
                                     <th class="p-3.5">ยศ/ฉายา</th>
-                                    <th class="p-3.5 text-center w-36">การจัดการ</th>
+                                    <th class="p-3.5 text-center w-48">การจัดการ</th>
                                 </tr>
                             </thead>
                             <tbody id="memberListTable" class="divide-y divide-slate-800/60"></tbody>
@@ -322,7 +367,6 @@
                     </div>
                 </div>
 
-                <!-- 📜 Audit Log Section (UI ใหม่) -->
                 <div class="glass-card rounded-3xl border border-slate-800 p-6 shadow-xl space-y-4">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
                         <div>
@@ -505,7 +549,6 @@
     </div>
 
     <script>
-        // 🔒 ป้องกัน Key หลุด: ให้อ่านจาก localStorage หากไม่มีให้ใช้ค่าเริ่มต้น
         const JSONBIN_KEY = localStorage.getItem('JSONBIN_KEY') || '$2a$10$AfzyQQmCefVFTjHqSh6DtumodBBZrQNtjgbd4Z66ktronMXh3.1Zu';
         const BIN_ID = localStorage.getItem('BIN_ID') || '6a9c4e92da38895dfe3d38ca';
 
@@ -516,7 +559,6 @@
         let currentLogFilter = 'ALL';
         let autoRefreshInterval = null;
 
-        // 🛡️ ป้องกัน XSS
         function escapeHTML(str) {
             if (!str) return '';
             return String(str).replace(/[&<>"']/g, function(m) {
@@ -572,7 +614,12 @@
 
         async function loadData(showLoading = false) {
             const refreshIcon = document.getElementById('refreshIcon');
-            if (showLoading && refreshIcon) refreshIcon.classList.add('fa-spin');
+            const navRefreshIcon = document.getElementById('navRefreshIcon');
+
+            if (showLoading) {
+                if (refreshIcon) refreshIcon.classList.add('fa-spin');
+                if (navRefreshIcon) navRefreshIcon.classList.add('fa-spin');
+            }
 
             try {
                 const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
@@ -586,7 +633,6 @@
                 if(!appData.logs) appData.logs = [];
                 if(!appData.targetGoal) appData.targetGoal = 50000;
 
-                // ดึงตั้งค่า Discord จาก appData หรือ localStorage
                 const savedWebhook = appData.discordWebhook || localStorage.getItem('DISCORD_WEBHOOK') || '';
                 const savedRoleId = appData.discordRoleId || localStorage.getItem('DISCORD_ROLE_ID') || '';
 
@@ -607,22 +653,29 @@
             } catch (e) { 
                 console.error('Fetch Error:', e); 
             } finally {
-                if (showLoading && refreshIcon) {
-                    setTimeout(() => refreshIcon.classList.remove('fa-spin'), 500);
+                if (showLoading) {
+                    setTimeout(() => {
+                        if (refreshIcon) refreshIcon.classList.remove('fa-spin');
+                        if (navRefreshIcon) navRefreshIcon.classList.remove('fa-spin');
+                    }, 500);
                 }
             }
         }
 
         async function manualRefresh() {
             const btn = document.getElementById('refreshBtn');
-            btn.disabled = true;
+            const navBtn = document.getElementById('refreshHeaderBtn');
+            if (btn) btn.disabled = true;
+            if (navBtn) navBtn.disabled = true;
+
             await loadData(true);
-            btn.disabled = false;
+
+            if (btn) btn.disabled = false;
+            if (navBtn) navBtn.disabled = false;
         }
 
         function startAutoRefresh() {
             if (autoRefreshInterval) clearInterval(autoRefreshInterval);
-            // ดึงข้อมูลอัตโนมัติทุกๆ 10 วินาที
             autoRefreshInterval = setInterval(() => {
                 if (currentUser) {
                     loadData(false);
@@ -644,7 +697,6 @@
             const url = document.getElementById('discordWebhookInput').value.trim();
             const roleId = document.getElementById('discordRoleIdInput').value.trim();
             
-            // บันทึกลง localStorage และ appData
             localStorage.setItem('DISCORD_WEBHOOK', url);
             localStorage.setItem('DISCORD_ROLE_ID', roleId);
             appData.discordWebhook = url;
@@ -699,6 +751,16 @@
                 document.getElementById('navRoleBadge').innerText = `${currentUser.role}`;
 
                 const isAdmin = (currentUser.role === 'OWNER' || currentUser.role === 'ADMIN');
+                const debtBtn = document.getElementById('btnSendDebtDiscord');
+
+                // ปรับแสดง/ซ่อนปุ่มส่งทวงหนี้ (ADMIN/OWNER เท่านั้น)
+                if (isAdmin) {
+                    debtBtn.classList.remove('hidden');
+                    debtBtn.classList.add('flex');
+                } else {
+                    debtBtn.classList.add('hidden');
+                    debtBtn.classList.remove('flex');
+                }
 
                 if (currentUser.role === 'PENDING') {
                     document.getElementById('pendingNotice').classList.remove('hidden');
@@ -734,7 +796,6 @@
                 renderMemberList();
                 renderAuditLogs();
 
-                // เริ่มต้นการดึงข้อมูลอัตโนมัติ
                 startAutoRefresh();
             } else { alert('Username หรือ Password ไม่ถูกต้อง'); }
         }
@@ -986,6 +1047,23 @@
             }
         }
 
+        // ฟังก์ชั่นสลับสิทธิ์การใช้งานแบบ Quick Switch (สำหรับ OWNER)
+        async function quickToggleRole(username, newRole) {
+            if (currentUser.role !== 'OWNER') return alert('เฉพาะ OWNER เท่านั้นที่สามารถเปลี่ยนสิทธิ์ได้ทันที');
+            
+            const target = appData.users.find(u => u.username === username);
+            if (!target) return;
+            if (target.role === 'OWNER') return alert('ไม่สามารถเปลี่ยนสิทธิ์ OWNER ได้');
+
+            target.role = newRole;
+            addLog(`ปรับเปลี่ยนระดับสิทธิ์ของ ${target.displayName} เป็น ${newRole}`, 'USER');
+            playSound('notif');
+            await saveData();
+            updateNotifications();
+            renderMemberList();
+            renderAuditLogs();
+        }
+
         async function createBill() {
             const title = document.getElementById('billTitle').value.trim();
             const amount = parseInt(document.getElementById('billAmount').value);
@@ -1197,8 +1275,12 @@
             document.getElementById('aiAnalysisText').innerText = msg;
         }
 
-        // 🔔 ระบบส่งแจ้งเตือนลง Discord Webhook (แบบแท็กยศ + Embed UI สวยงาม)
         async function sendDiscordNotification() {
+            // ป้องกันชั้นที่ 2 ฝั่ง JavaScript
+            if (!currentUser || (currentUser.role !== 'OWNER' && currentUser.role !== 'ADMIN')) {
+                return alert('เฉพาะ ADMIN หรือ OWNER เท่านั้นที่สามารถส่งทวงหนี้ลง Discord ได้!');
+            }
+
             const webhookUrl = appData.discordWebhook || localStorage.getItem('DISCORD_WEBHOOK') || '';
             const roleId = appData.discordRoleId || localStorage.getItem('DISCORD_ROLE_ID') || '';
 
@@ -1217,7 +1299,7 @@
             const roleMention = roleId ? `<@&${roleId}> ` : '';
 
             const embedData = {
-                username: "ระบบคลังเงินแก๊ง | MONEY GANG Liberate[LR] ",
+                username: "ระบบคลังเงินแก๊ง | MONEY GANG Liberate[LR]",
                 avatar_url: "https://cdn-icons-png.flaticon.com/512/2489/2489756.png",
                 content: `${roleMention}🚨 **ประกาศแจ้งเตือนค้างชำระเงินคลังประจำสัปดาห์!**`,
                 embeds: [{
@@ -1309,6 +1391,7 @@
             return roleBadge;
         }
 
+        // ระบบ rendering รายชื่อสมาชิกพร้อมฟีเจอร์จัดการ ยศ สิทธิ์ และ Dashboard Cards
         function renderMemberList() {
             if (!currentUser || (currentUser.role !== 'OWNER' && currentUser.role !== 'ADMIN')) return;
 
@@ -1316,20 +1399,66 @@
             tbody.innerHTML = '';
 
             const users = appData.users || [];
-            users.forEach((u, index) => {
+            
+            // อัปเดตตัวเลขจำนวนยศ
+            document.getElementById('countOwner').innerText = users.filter(u => u.role === 'OWNER').length;
+            document.getElementById('countAdmin').innerText = users.filter(u => u.role === 'ADMIN').length;
+            document.getElementById('countUser').innerText = users.filter(u => u.role === 'USER').length;
+            document.getElementById('countPending').innerText = users.filter(u => u.role === 'PENDING').length;
+
+            const search = document.getElementById('memberSearchInput') ? document.getElementById('memberSearchInput').value.toLowerCase() : '';
+            const roleFilter = document.getElementById('memberRoleFilter') ? document.getElementById('memberRoleFilter').value : 'ALL';
+
+            const filteredUsers = users.filter(u => {
+                const matchSearch = u.displayName.toLowerCase().includes(search) || u.username.toLowerCase().includes(search);
+                const matchRole = roleFilter === 'ALL' || u.role === roleFilter;
+                return matchSearch && matchRole;
+            });
+
+            if (filteredUsers.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-xs text-slate-500">ไม่พบข้อมูลสมาชิกตรงตามเงื่อนไข</td></tr>`;
+                return;
+            }
+
+            filteredUsers.forEach((u, index) => {
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-800/40 transition";
+
+                let roleBadgeColor = "text-slate-400";
+                if (u.role === 'OWNER') roleBadgeColor = "text-amber-400 font-extrabold";
+                else if (u.role === 'ADMIN') roleBadgeColor = "text-indigo-400 font-bold";
+                else if (u.role === 'USER') roleBadgeColor = "text-sky-400 font-semibold";
+                else if (u.role === 'PENDING') roleBadgeColor = "text-rose-400 font-semibold";
+
+                // Quick actions สำหรับ OWNER
+                let quickActionBtns = '';
+                if (currentUser.role === 'OWNER' && u.role !== 'OWNER') {
+                    if (u.role === 'ADMIN') {
+                        quickActionBtns = `<button onclick="quickToggleRole('${u.username}', 'USER')" title="ลดสิทธิ์เป็น USER" class="p-1.5 rounded-lg bg-sky-500/10 text-sky-400 border border-sky-500/20 hover:bg-sky-500/20 text-xs transition">
+                            <i class="fa-solid fa-arrow-down-long"></i> USER
+                        </button>`;
+                    } else if (u.role === 'USER') {
+                        quickActionBtns = `<button onclick="quickToggleRole('${u.username}', 'ADMIN')" title="เพิ่มสิทธิ์เป็น ADMIN" class="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 hover:bg-indigo-500/20 text-xs transition">
+                            <i class="fa-solid fa-arrow-up-long"></i> ADMIN
+                        </button>`;
+                    } else if (u.role === 'PENDING') {
+                        quickActionBtns = `<button onclick="quickApproveUser('${u.username}')" title="อนุมัติยศ" class="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 text-xs transition">
+                            <i class="fa-solid fa-check"></i> อนุมัติ
+                        </button>`;
+                    }
+                }
 
                 tr.innerHTML = `
                     <td class="p-3.5 text-center text-xs text-slate-500 font-semibold">${index + 1}</td>
                     <td class="p-3.5 font-bold text-white text-xs">${escapeHTML(u.displayName)}</td>
                     <td class="p-3.5 text-slate-400 text-xs">@${escapeHTML(u.username)}</td>
-                    <td class="p-3.5 text-xs font-bold text-amber-400">${u.role}</td>
+                    <td class="p-3.5 text-xs ${roleBadgeColor}">${u.role}</td>
                     <td class="p-3.5 text-xs">${getUserBadge(u.username)}</td>
                     <td class="p-3.5 text-center">
-                        <div class="flex justify-center gap-2">
-                            <button onclick="openRankModal('${u.username}')" title="แต่งตั้งยศ" class="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 px-3 py-1.5 rounded-xl text-xs font-semibold transition">
-                                <i class="fa-solid fa-pen-to-square"></i> แก้ไข
+                        <div class="flex justify-center items-center gap-1.5">
+                            ${quickActionBtns}
+                            <button onclick="openRankModal('${u.username}')" title="แก้ไขยศ/สิทธิ์" class="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 px-2.5 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1">
+                                <i class="fa-solid fa-pen-to-square"></i> แต่งยศ
                             </button>
                             <button onclick="deleteUser('${u.username}')" title="ลบสมาชิก" class="bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 px-2.5 py-1.5 rounded-xl text-xs font-semibold transition">
                                 <i class="fa-solid fa-trash-can"></i>
@@ -1341,7 +1470,6 @@
             });
         }
 
-        // 📜 ระบบจัดการ Audit Log
         function setLogFilter(filter) {
             currentLogFilter = filter;
             document.getElementById('logFilterAll').className = filter === 'ALL' ? "px-3 py-1 rounded-xl bg-slate-800 text-indigo-400 shadow" : "px-3 py-1 rounded-xl text-slate-400 hover:text-indigo-400 transition";
