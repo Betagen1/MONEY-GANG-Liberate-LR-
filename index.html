@@ -1,0 +1,1496 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GANG TREASURY PRO - ระบบคลังเงิน & รายจ่ายแก๊ง</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body { 
+            font-family: 'Kanit', sans-serif; 
+            background: radial-gradient(circle at top, #0f172a 0%, #080c14 100%);
+            background-attachment: fixed;
+        }
+        .glass-card {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+        .glow-emerald { box-shadow: 0 0 25px rgba(16, 185, 129, 0.15); }
+        .glow-sky { box-shadow: 0 0 25px rgba(14, 165, 233, 0.15); }
+        .glow-rose { box-shadow: 0 0 25px rgba(244, 63, 94, 0.15); }
+        .glow-amber { box-shadow: 0 0 25px rgba(245, 158, 11, 0.15); }
+        .glow-purple { box-shadow: 0 0 25px rgba(168, 85, 247, 0.15); }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
+</head>
+<body class="text-slate-100 min-h-screen pb-12">
+
+    <nav class="sticky top-0 z-40 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-200 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-amber-500/20">
+                    <i class="fa-solid fa-vault text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-sky-300 to-indigo-300">MONEY GANG Liberate[LR]</h1>
+                    <p class="text-[10px] text-slate-400 font-medium">ระบบบริหารจัดการเงิน & รายจ่ายแก๊ง</p>
+                </div>
+            </div>
+
+            <div id="userInfoNav" class="hidden items-center gap-3">
+                <button id="adminNotifBtn" onclick="openPendingUsersModal()" class="hidden relative p-2.5 bg-slate-900 hover:bg-slate-800 text-amber-400 rounded-2xl border border-slate-800 transition">
+                    <i class="fa-solid fa-bell text-sm"></i>
+                    <span id="notifBadge" class="hidden absolute -top-1 -right-1 bg-rose-500 text-white text-[9px] font-black w-5 h-5 rounded-full flex items-center justify-center animate-bounce shadow-md">0</span>
+                </button>
+
+                <div class="flex flex-col items-end">
+                    <span id="navDisplayName" class="text-xs font-bold text-sky-400"></span>
+                    <span id="navRoleBadge" class="text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-slate-800 text-amber-400 border border-amber-500/30"></span>
+                </div>
+
+                <button onclick="logout()" title="ออกจากระบบ" class="p-2.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-2xl transition">
+                    <i class="fa-solid fa-power-off text-sm"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+
+        <div id="authSection" class="max-w-md mx-auto my-12 glass-card rounded-3xl p-8 border border-slate-800 shadow-2xl relative overflow-hidden">
+            <div class="text-center mb-8">
+                <div class="w-20 h-20 bg-gradient-to-tr from-sky-500/20 to-indigo-500/20 border border-sky-500/30 text-sky-400 rounded-3xl flex items-center justify-center text-3xl mx-auto mb-4 shadow-inner">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <h2 class="text-2xl font-black text-white">เข้าสู่ระบบคลังเงิน</h2>
+                <p class="text-xs text-slate-400 mt-1">ยินดีต้อนรับสู่ระบบบริหารคลังเงินแก๊ง</p>
+            </div>
+
+            <div class="flex p-1 bg-slate-950/80 rounded-2xl mb-6 text-xs font-bold border border-slate-800">
+                <button id="tabLogin" onclick="switchAuthTab('login')" class="flex-1 py-3 rounded-xl bg-slate-800 text-sky-400 shadow">เข้าสู่ระบบ</button>
+                <button id="tabReg" onclick="switchAuthTab('reg')" class="flex-1 py-3 rounded-xl text-slate-400 transition">สมัครสมาชิก</button>
+            </div>
+
+            <form id="loginForm" onsubmit="login(event)" class="space-y-4">
+                <div class="relative">
+                    <i class="fa-solid fa-user absolute left-4 top-3.5 text-slate-500 text-xs"></i>
+                    <input id="loginUser" type="text" required placeholder="Username" class="w-full pl-10 pr-4 py-3 bg-slate-950/60 border border-slate-800 rounded-2xl text-xs text-white focus:outline-none focus:border-sky-500 transition">
+                </div>
+                <div class="relative">
+                    <i class="fa-solid fa-key absolute left-4 top-3.5 text-slate-500 text-xs"></i>
+                    <input id="loginPass" type="password" required placeholder="Password" class="w-full pl-10 pr-4 py-3 bg-slate-950/60 border border-slate-800 rounded-2xl text-xs text-white focus:outline-none focus:border-sky-500 transition">
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-sky-500 via-indigo-600 to-indigo-700 hover:from-sky-400 hover:to-indigo-600 text-white py-3.5 rounded-2xl font-bold text-xs shadow-lg shadow-sky-500/20 transition">
+                    🚀 เข้าสู่ระบบ
+                </button>
+            </form>
+
+            <form id="regForm" onsubmit="register(event)" class="hidden space-y-4">
+                <input id="regUser" type="text" required placeholder="Username" class="w-full p-3 bg-slate-950/60 border border-slate-800 rounded-2xl text-xs text-white focus:outline-none focus:border-sky-500 transition">
+                <input id="regPass" type="password" required placeholder="Password" class="w-full p-3 bg-slate-950/60 border border-slate-800 rounded-2xl text-xs text-white focus:outline-none focus:border-sky-500 transition">
+                <input id="regName" type="text" required placeholder="ชื่อที่แสดง (Display Name)" class="w-full p-3 bg-slate-950/60 border border-slate-800 rounded-2xl text-xs text-white focus:outline-none focus:border-sky-500 transition">
+                <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 py-3.5 rounded-2xl font-bold text-xs shadow-lg shadow-emerald-500/20 transition">
+                    ✨ สมัครสมาชิก (สถานะรออนุมัติ)
+                </button>
+            </form>
+        </div>
+
+        <div id="dashboardSection" class="hidden space-y-6">
+
+            <div id="userNotificationBanner" class="hidden transition-all duration-300"></div>
+
+            <div id="pendingNotice" class="hidden glass-card border border-amber-500/30 p-5 rounded-3xl flex items-center gap-4 text-amber-400 text-xs font-medium">
+                <div class="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-lg flex-shrink-0">
+                    <i class="fa-solid fa-clock-rotate-left animate-spin"></i>
+                </div>
+                <span>บัญชีของคุณอยู่ระหว่าง **รอรับการอนุมัติยศ** จาก Owner/Admin (สามารถดูเฉพาะยอดเงินรวมของคลังได้)</span>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 border border-slate-800/80 glow-sky">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-3">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-sm font-black text-white">🎯 เป้าหมายการจัดเก็บคลังเงินแก๊ง</h3>
+                            <span id="goalPercentBadge" class="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">0%</span>
+                        </div>
+                        <p id="goalSubtitle" class="text-xs text-slate-400 mt-1">ชำระแล้ว <span id="goalPaidAmount" class="text-emerald-400 font-bold">0</span> จากเป้าหมายทั้งหมด <span id="goalTotalAmount" class="text-white font-bold">0</span> บาท</p>
+                    </div>
+                    <button onclick="setCustomGoal()" class="text-[11px] bg-slate-800 hover:bg-slate-700 text-sky-400 border border-slate-700 px-3.5 py-1.5 rounded-xl font-bold transition">
+                        ⚙️ ตั้งเป้าหมายคลัง
+                    </button>
+                </div>
+
+                <div class="w-full bg-slate-950 rounded-full h-4 p-0.5 border border-slate-800 overflow-hidden relative">
+                    <div id="treasuryProgressBar" class="bg-gradient-to-r from-emerald-500 via-teal-400 to-sky-400 h-full rounded-full transition-all duration-1000 shadow-lg shadow-emerald-500/30" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="glass-card p-6 rounded-3xl border border-indigo-500/30 flex flex-col md:flex-row justify-between items-start md:items-center gap-5">
+                <div class="flex items-start gap-3.5">
+                    <div class="w-11 h-11 rounded-2xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-400 flex items-center justify-center text-xl mt-0.5 flex-shrink-0">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="font-black text-white text-sm">GANG AI FINANCIAL ADVISOR</h3>
+                            <span class="text-[9px] bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded-full border border-indigo-500/30 font-extrabold">LIVE</span>
+                        </div>
+                        <p id="aiAnalysisText" class="text-xs text-slate-300 mt-1">กำลังวิเคราะห์พฤติกรรมทางการเงินของแก๊ง...</p>
+                    </div>
+                </div>
+                
+                <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
+                    <button onclick="sendDiscordNotification()" class="flex-1 md:flex-none bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-400/30 px-4 py-2.5 rounded-2xl font-bold text-xs transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20">
+                        <i class="fa-brands fa-discord text-sm"></i> ส่งทวงหนี้ลง Discord
+                    </button>
+                    <button onclick="sendDiscordAuditReport()" class="flex-1 md:flex-none bg-purple-600 hover:bg-purple-500 text-white border border-purple-400/30 px-4 py-2.5 rounded-2xl font-bold text-xs transition flex items-center justify-center gap-2 shadow-lg shadow-purple-600/20">
+                        <i class="fa-solid fa-chart-pie"></i> ส่งรายงานคลัง
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                
+                <div class="glass-card p-5 rounded-3xl border border-emerald-500/40 flex justify-between items-center relative overflow-hidden glow-emerald">
+                    <div class="absolute inset-y-0 left-0 w-1.5 bg-emerald-400"></div>
+                    <div>
+                        <p class="text-[11px] font-bold text-emerald-400 uppercase tracking-wider">เงินคลังคงเหลือสุทธิ</p>
+                        <h3 id="statNetBalance" class="text-2xl font-black text-white mt-1">0</h3>
+                        <span class="text-[10px] text-slate-400 font-medium">บาท (เก็บได้ - รายจ่าย)</span>
+                    </div>
+                    <div class="w-11 h-11 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl border border-emerald-500/30 flex-shrink-0">
+                        <i class="fa-solid fa-wallet"></i>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 rounded-3xl border border-slate-800 flex justify-between items-center relative overflow-hidden glow-sky">
+                    <div class="absolute inset-y-0 left-0 w-1.5 bg-sky-500"></div>
+                    <div>
+                        <p class="text-xs font-semibold text-slate-400">ยอดเก็บได้รวม</p>
+                        <h3 id="statTotalPaid" class="text-xl font-black text-sky-400 mt-1">0</h3>
+                        <span class="text-[10px] text-slate-500 font-medium">บาท</span>
+                    </div>
+                    <div class="w-11 h-11 rounded-2xl bg-sky-500/10 text-sky-400 flex items-center justify-center text-lg border border-sky-500/20 flex-shrink-0">
+                        <i class="fa-solid fa-vault"></i>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 rounded-3xl border border-slate-800 flex justify-between items-center relative overflow-hidden glow-purple">
+                    <div class="absolute inset-y-0 left-0 w-1.5 bg-purple-500"></div>
+                    <div>
+                        <p class="text-xs font-semibold text-slate-400">รายจ่ายรวมทั้งหมด</p>
+                        <h3 id="statTotalExpenses" class="text-xl font-black text-purple-400 mt-1">0</h3>
+                        <span class="text-[10px] text-slate-500 font-medium">บาท</span>
+                    </div>
+                    <div class="w-11 h-11 rounded-2xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-lg border border-purple-500/20 flex-shrink-0">
+                        <i class="fa-solid fa-money-bill-transfer"></i>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 rounded-3xl border border-slate-800 flex justify-between items-center relative overflow-hidden glow-rose">
+                    <div class="absolute inset-y-0 left-0 w-1.5 bg-rose-500"></div>
+                    <div>
+                        <p class="text-xs font-semibold text-slate-400">ยอดค้างชำระรวม</p>
+                        <h3 id="statPendingAmount" class="text-xl font-black text-rose-400 mt-1">0</h3>
+                        <span class="text-[10px] text-slate-500 font-medium">บาท</span>
+                    </div>
+                    <div class="w-11 h-11 rounded-2xl bg-rose-500/10 text-rose-400 flex items-center justify-center text-lg border border-rose-500/20 flex-shrink-0">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 rounded-3xl border border-slate-800 flex justify-between items-center relative overflow-hidden glow-amber">
+                    <div class="absolute inset-y-0 left-0 w-1.5 bg-amber-500"></div>
+                    <div>
+                        <p class="text-xs font-semibold text-slate-400">สมาชิกในระบบ</p>
+                        <h3 id="statUsers" class="text-xl font-black text-amber-400 mt-1">0</h3>
+                        <span class="text-[10px] text-slate-500 font-medium">คน</span>
+                    </div>
+                    <div class="w-11 h-11 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-lg border border-amber-500/20 flex-shrink-0">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div class="glass-card p-5 rounded-3xl border border-emerald-500/30 flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-2xl border border-emerald-500/30 flex-shrink-0">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-emerald-400 uppercase tracking-wider">🏆 ลูกพี่สายเปย์ #1 (จ่ายเงินสูงสุด)</p>
+                        <p id="topPayerText" class="text-sm font-black text-white mt-1">-</p>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 rounded-3xl border border-rose-500/30 flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center text-2xl border border-rose-500/30 flex-shrink-0">
+                        <i class="fa-solid fa-fire text-amber-500 animate-pulse"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-rose-400 uppercase tracking-wider">💀 เจ้าพ่อดองเงิน #1 (ค้างชำระสูงสุด)</p>
+                        <p id="topDebtorText" class="text-sm font-black text-white mt-1">-</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="adminPanel" class="hidden space-y-6">
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    
+                    <div class="glass-card rounded-3xl border border-sky-500/30 p-6 shadow-xl space-y-4">
+                        <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-file-invoice-dollar text-sm"></i> ออกใบทวงเงินแก๊ง (สร้างรายการเรียกเก็บ)
+                        </h3>
+                        <div class="space-y-3">
+                            <input id="billTitle" type="text" placeholder="ชื่อรายการ (เช่น ค่าส่วนกลางสัปดาห์ที่ 1)" class="w-full p-3 bg-slate-950/70 border border-slate-800 rounded-2xl text-xs text-white focus:outline-none focus:border-sky-500 transition">
+                            <input id="billAmount" type="number" placeholder="จำนวนเงินต่อคน (บาท)" class="w-full p-3 bg-slate-950/70 border border-slate-800 rounded-2xl text-xs text-white focus:outline-none focus:border-sky-500 transition">
+                            <button onclick="createBill()" class="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold py-3 rounded-2xl text-xs transition shadow-lg shadow-sky-500/20">
+                                + ออกใบเก็บเงินให้สมาชิกทุกคน
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="glass-card rounded-3xl border border-purple-500/30 p-6 shadow-xl space-y-4">
+                        <h3 class="text-xs font-bold text-purple-400 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-cart-shopping text-sm"></i> บันทึกรายการเบิก/รายจ่ายแก๊ง
+                        </h3>
+                        <div class="space-y-3">
+                            <input id="expenseTitle" type="text" placeholder="ชื่อรายการเบิกจ่าย (เช่น ซื้อยา/ค่าอาวุธ/ค่าสวัสดิการ)" class="w-full p-3 bg-slate-950/70 border border-slate-800 rounded-2xl text-xs text-white focus:outline-none focus:border-purple-500 transition">
+                            <div class="grid grid-cols-2 gap-2">
+                                <input id="expenseAmount" type="number" placeholder="จำนวนเงิน (บาท)" class="p-3 bg-slate-950/70 border border-slate-800 rounded-2xl text-xs text-white focus:outline-none focus:border-purple-500 transition">
+                                <select id="expenseCategory" class="p-3 bg-slate-950/70 border border-slate-800 rounded-2xl text-xs text-white focus:outline-none focus:border-purple-500 transition">
+                                    <option value="💊 ค่ายา/ของใช้">💊 ค่ายา/ของใช้</option>
+                                    <option value="🔫 ค่าอาวุธ/อุปกรณ์">🔫 ค่าอาวุธ/อุปกรณ์</option>
+                                    <option value="🤝 ค่าพันธมิตร/สวัสดิการ">🤝 ค่าสวัสดิการ/พันธมิตร</option>
+                                    <option value="⚖️ ค่าปรับ/ประกันตัว">⚖️ ค่าปรับ/ประกันตัว</option>
+                                    <option value="📦 อื่นๆ">📦 อื่นๆ</option>
+                                </select>
+                            </div>
+                            <button onclick="addExpense()" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 rounded-2xl text-xs transition shadow-lg shadow-purple-600/20">
+                                - บันทึกรายจ่ายลงคลัง
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="glass-card rounded-3xl border border-slate-800 p-5 shadow-xl space-y-3">
+                    <label class="text-xs font-bold text-indigo-400 flex items-center gap-2">
+                        <i class="fa-brands fa-discord"></i> Discord Webhook & Role ID (ตั้งค่าแจ้งเตือนดิสคอร์ด)
+                    </label>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <input id="discordWebhookInput" type="url" placeholder="https://discord.com/api/webhooks/..." class="md:col-span-2 p-2.5 bg-slate-950/70 border border-slate-800 rounded-2xl text-xs text-slate-300 focus:outline-none focus:border-indigo-500 transition">
+                        <input id="discordRoleIdInput" type="text" placeholder="Role ID (เช่น 123456789)" class="p-2.5 bg-slate-950/70 border border-slate-800 rounded-2xl text-xs text-slate-300 focus:outline-none focus:border-indigo-500 transition">
+                    </div>
+                    <button onclick="saveDiscordSettings()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-2.5 rounded-2xl text-xs font-bold transition">
+                        💾 บันทึกตั้งค่า Discord
+                    </button>
+                </div>
+
+                <div class="glass-card rounded-3xl border border-amber-500/30 p-6 shadow-xl">
+                    <div class="flex justify-between items-center mb-5">
+                        <h3 class="text-sm font-bold text-amber-400 flex items-center gap-2">
+                            <i class="fa-solid fa-users-gear"></i> จัดการสมาชิกทั้งหมดในระบบ (ADMIN/OWNER)
+                        </h3>
+                        <span class="text-xs text-slate-500">ปรับยศ / ลบสมาชิกออกจากแก๊ง</span>
+                    </div>
+
+                    <div class="overflow-x-auto custom-scrollbar">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-950/80 text-slate-400 text-[11px] uppercase border-b border-slate-800">
+                                <tr>
+                                    <th class="p-3.5 text-center w-12">#</th>
+                                    <th class="p-3.5">ชื่อที่แสดง</th>
+                                    <th class="p-3.5">Username</th>
+                                    <th class="p-3.5">ระดับสิทธิ์ (Role)</th>
+                                    <th class="p-3.5">ยศ/ฉายา</th>
+                                    <th class="p-3.5 text-center w-36">การจัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="memberListTable" class="divide-y divide-slate-800/60"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 📜 Audit Log Section (UI ใหม่) -->
+                <div class="glass-card rounded-3xl border border-slate-800 p-6 shadow-xl space-y-4">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
+                        <div>
+                            <h3 class="text-xs font-bold text-slate-300 flex items-center gap-2">
+                                <i class="fa-solid fa-clock-rotate-left text-indigo-400"></i> ประวัติกิจกรรมระบบคลัง (Audit Log)
+                            </h3>
+                            <p class="text-[10px] text-slate-400">บันทึกประวัติการทำรายการย้อนหลังในระบบ</p>
+                        </div>
+                        
+                        <div class="flex items-center gap-2">
+                            <button onclick="downloadLogs()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-sky-400 rounded-xl text-[11px] font-bold border border-slate-700 transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-download"></i> ส่งออก CSV
+                            </button>
+                            <button onclick="clearAuditLogs()" class="px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-xl text-[11px] font-bold border border-rose-500/30 transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-trash"></i> ล้าง Log
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row justify-between gap-3">
+                        <div class="flex p-1 bg-slate-950 rounded-2xl border border-slate-800 text-[11px] font-bold">
+                            <button id="logFilterAll" onclick="setLogFilter('ALL')" class="px-3 py-1 rounded-xl bg-slate-800 text-indigo-400 shadow">ทั้งหมด</button>
+                            <button id="logFilterPay" onclick="setLogFilter('PAY')" class="px-3 py-1 rounded-xl text-slate-400 hover:text-emerald-400 transition">การเงิน</button>
+                            <button id="logFilterBill" onclick="setLogFilter('BILL')" class="px-3 py-1 rounded-xl text-slate-400 hover:text-sky-400 transition">ใบทวง</button>
+                            <button id="logFilterUser" onclick="setLogFilter('USER')" class="px-3 py-1 rounded-xl text-slate-400 hover:text-amber-400 transition">สมาชิก</button>
+                        </div>
+
+                        <div class="relative sm:w-64">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-500 text-[11px]"></i>
+                            <input id="logSearchInput" oninput="renderAuditLogs()" type="text" placeholder="ค้นหาประวัติกิจกรรม..." class="w-full pl-8 pr-3 py-1.5 bg-slate-950/80 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-indigo-500 transition">
+                        </div>
+                    </div>
+
+                    <div id="auditLogList" class="space-y-2 max-h-64 overflow-y-auto custom-scrollbar pr-1 text-xs text-slate-400"></div>
+                </div>
+
+            </div>
+
+            <div id="tableSection" class="glass-card rounded-3xl border border-slate-800 p-6 shadow-xl">
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-2xl bg-sky-500/10 text-sky-400 flex items-center justify-center text-lg border border-sky-500/20">
+                            <i class="fa-solid fa-receipt"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-black text-white">รายการเก็บเงินคลังแก๊ง</h2>
+                            <p class="text-xs text-slate-400">ตรวจสอบและจัดการการชำระเงินของสมาชิก</p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-2.5 w-full lg:w-auto">
+                        <div class="flex p-1 bg-slate-950 rounded-2xl border border-slate-800 text-xs font-bold">
+                            <button id="filterAll" onclick="setTableFilter('ALL')" class="px-3 py-1.5 rounded-xl bg-slate-800 text-sky-400 shadow">ทั้งหมด</button>
+                            <button id="filterPaid" onclick="setTableFilter('PAID')" class="px-3 py-1.5 rounded-xl text-slate-400 hover:text-emerald-400 transition">จ่ายแล้ว</button>
+                            <button id="filterPending" onclick="setTableFilter('PENDING')" class="px-3 py-1.5 rounded-xl text-slate-400 hover:text-rose-400 transition">ยังไม่จ่าย</button>
+                        </div>
+
+                        <div class="relative flex-1 sm:w-56">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500 text-xs"></i>
+                            <input id="searchInput" oninput="renderTable()" type="text" placeholder="ค้นหาชื่อสมาชิก..." class="w-full pl-9 pr-4 py-2 bg-slate-950/80 border border-slate-800 rounded-2xl text-xs text-white focus:outline-none focus:border-sky-500 transition">
+                        </div>
+
+                        <button onclick="loadData()" class="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-2xl text-xs font-semibold transition border border-slate-700">
+                            <i class="fa-solid fa-rotate-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-950/80 text-slate-400 text-[11px] uppercase border-b border-slate-800">
+                            <tr>
+                                <th class="p-4 text-center w-12">#</th>
+                                <th class="p-4">สมาชิก & ยศแก๊ง</th>
+                                <th class="p-4">รายการ</th>
+                                <th class="p-4 text-right">ยอดเงิน</th>
+                                <th class="p-4 text-center w-36">สถานะชำระเงิน</th>
+                                <th id="adminActionHeader" class="p-4 text-center w-36 hidden">การจัดการ (ADMIN)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="duesTable" class="divide-y divide-slate-800/60"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="expenseSection" class="glass-card rounded-3xl border border-purple-500/30 p-6 shadow-xl">
+                <div class="flex justify-between items-center mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-2xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-lg border border-purple-500/20">
+                            <i class="fa-solid fa-receipt"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-black text-white">ประวัติรายการเบิกจ่ายของแก๊ง</h2>
+                            <p class="text-xs text-slate-400">รายการใช้จ่ายเงินออกจากคลังแก๊งทั้งหมด</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-950/80 text-slate-400 text-[11px] uppercase border-b border-slate-800">
+                            <tr>
+                                <th class="p-4 text-center w-12">#</th>
+                                <th class="p-4">หมวดหมู่</th>
+                                <th class="p-4">รายการเบิกจ่าย</th>
+                                <th class="p-4">ผู้ลงบันทึก</th>
+                                <th class="p-4 text-right">จำนวนเงิน</th>
+                                <th class="p-4 text-center">วันที่บันทึก</th>
+                                <th id="expenseAdminActionHeader" class="p-4 text-center w-24 hidden">จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="expenseTable" class="divide-y divide-slate-800/60"></tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div id="pendingUsersModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
+        <div class="glass-card w-full max-w-lg rounded-3xl p-6 border border-slate-800 text-left shadow-2xl relative">
+            <button onclick="closePendingUsersModal()" class="absolute top-5 right-5 text-slate-500 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <h3 class="text-lg font-black text-amber-400 mb-1 flex items-center gap-2">
+                <i class="fa-solid fa-user-clock"></i> สมาชิกรอการอนุมัติยศ
+            </h3>
+            <p class="text-xs text-slate-400 mb-4">อนุมัติยศ USER เพื่อให้สมาชิกใช้งานตารางคลังเงินได้</p>
+
+            <div id="pendingUsersList" class="space-y-2 max-h-80 overflow-y-auto custom-scrollbar pr-1"></div>
+        </div>
+    </div>
+
+    <div id="rankModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
+        <div class="glass-card w-full max-w-md rounded-3xl p-6 border border-slate-800 text-left shadow-2xl relative">
+            <button onclick="closeRankModal()" class="absolute top-5 right-5 text-slate-500 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <h3 class="text-lg font-black text-white mb-1 flex items-center gap-2">
+                <i class="fa-solid fa-crown text-amber-400"></i> จัดการสิทธิ์ & ยศสมาชิก
+            </h3>
+            <p class="text-xs text-slate-400 mb-5">อนุมัติยศ ตั้งสิทธิ์แอดมิน และฉายาประจำตัว</p>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs font-semibold text-slate-400">สมาชิก:</label>
+                    <p id="rankModalTargetUser" class="text-sm font-bold text-sky-400 mt-0.5"></p>
+                </div>
+
+                <div id="roleSelectorContainer" class="hidden">
+                    <label class="text-xs font-semibold text-amber-400">ระดับสิทธิ์ผู้ใช้งาน (OWNER ONLY):</label>
+                    <select id="userRoleSelect" class="w-full mt-1.5 p-3 bg-slate-950 border border-slate-800 rounded-2xl text-xs text-white focus:outline-none focus:border-amber-500">
+                        <option value="PENDING">⏳ PENDING (รออนุมัติ - เห็นเฉพาะยอดเงินคลัง)</option>
+                        <option value="USER">👤 USER (สมาชิกทั่วไป)</option>
+                        <option value="ADMIN">🛡️ ADMIN (ผู้ดูแลคลัง)</option>
+                        <option value="OWNER">👑 OWNER (เจ้าของแก๊งสูงสุด)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="text-xs font-semibold text-slate-400">ฉายา/ชื่อยศตกแต่ง:</label>
+                    <input id="customRankInput" type="text" placeholder="เช่น ราชาสายเปย์, เจ้าพ่อดองเงิน" class="w-full mt-1.5 p-3 bg-slate-950 border border-slate-800 rounded-2xl text-xs text-white focus:outline-none focus:border-sky-500">
+                </div>
+                <div>
+                    <label class="text-xs font-semibold text-slate-400">สีของป้ายยศ:</label>
+                    <select id="customRankColor" class="w-full mt-1.5 p-3 bg-slate-950 border border-slate-800 rounded-2xl text-xs text-white focus:outline-none focus:border-sky-500">
+                        <option value="amber">🟡 สีทอง (VIP / สายเปย์)</option>
+                        <option value="sky">🔵 สีฟ้า (สมาชิกกิตติมศักดิ์)</option>
+                        <option value="emerald">🟢 สีเขียว (ชำระไว)</option>
+                        <option value="rose">🔴 สีแดง (สายดอง)</option>
+                        <option value="purple">🟣 สีม่วง (ลึลับ)</option>
+                    </select>
+                </div>
+                <button onclick="saveUserRank()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 py-3.5 rounded-2xl font-bold text-xs transition shadow-lg shadow-amber-500/20 mt-2">
+                    💾 บันทึกการตั้งค่ายศ
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 🔒 ป้องกัน Key หลุด: ให้อ่านจาก localStorage หากไม่มีให้ใช้ค่าเริ่มต้น
+        const JSONBIN_KEY = localStorage.getItem('JSONBIN_KEY') || '$2a$10$AfzyQQmCefVFTjHqSh6DtumodBBZrQNtjgbd4Z66ktronMXh3.1Zu';
+        const BIN_ID = localStorage.getItem('BIN_ID') || '6a9c4e92da38895dfe3d38ca';
+
+        let appData = { users: [], dues: [], expenses: [], logs: [], targetGoal: 50000, discordWebhook: '', discordRoleId: '' };
+        let currentUser = null;
+        let selectedTargetUser = null;
+        let currentFilter = 'ALL';
+        let currentLogFilter = 'ALL';
+
+        // 🛡️ ป้องกัน XSS
+        function escapeHTML(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>"']/g, function(m) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+            });
+        }
+
+        function addLog(action, category = 'SYSTEM') {
+            if (!appData.logs) appData.logs = [];
+            const time = new Date().toLocaleString('th-TH');
+            appData.logs.unshift({ time, action, category });
+            if (appData.logs.length > 100) appData.logs.pop();
+        }
+
+        function playSound(type) {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+
+            if (type === 'pay') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.3);
+            } else if (type === 'notif') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(440, ctx.currentTime);
+                osc.frequency.linearRampToValueAtTime(880, ctx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.15);
+            }
+        }
+
+        function switchAuthTab(tab) {
+            if (tab === 'login') {
+                document.getElementById('loginForm').classList.remove('hidden');
+                document.getElementById('regForm').classList.add('hidden');
+                document.getElementById('tabLogin').className = "flex-1 py-3 rounded-xl bg-slate-800 text-sky-400 shadow";
+                document.getElementById('tabReg').className = "flex-1 py-3 rounded-xl text-slate-400 transition";
+            } else {
+                document.getElementById('loginForm').classList.add('hidden');
+                document.getElementById('regForm').classList.remove('hidden');
+                document.getElementById('tabReg').className = "flex-1 py-3 rounded-xl bg-slate-800 text-emerald-400 shadow";
+                document.getElementById('tabLogin').className = "flex-1 py-3 rounded-xl text-slate-400 transition";
+            }
+        }
+
+        async function loadData() {
+            try {
+                const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+                    headers: { 'X-Master-Key': JSONBIN_KEY }
+                });
+                const result = await res.json();
+                appData = result.record || {};
+                if(!appData.users) appData.users = [];
+                if(!appData.dues) appData.dues = [];
+                if(!appData.expenses) appData.expenses = [];
+                if(!appData.logs) appData.logs = [];
+                if(!appData.targetGoal) appData.targetGoal = 50000;
+
+                // ดึงตั้งค่า Discord จาก appData หรือ localStorage
+                const savedWebhook = appData.discordWebhook || localStorage.getItem('DISCORD_WEBHOOK') || '';
+                const savedRoleId = appData.discordRoleId || localStorage.getItem('DISCORD_ROLE_ID') || '';
+
+                document.getElementById('discordWebhookInput').value = savedWebhook;
+                document.getElementById('discordRoleIdInput').value = savedRoleId;
+                
+                updateStats();
+                updateLeaderboard();
+                updateAIAnalysis();
+                updateNotifications();
+                updateGoalProgress();
+                renderTable();
+                renderExpenseTable();
+                renderMemberList();
+                renderAuditLogs();
+            } catch (e) { console.error('Fetch Error:', e); }
+        }
+
+        async function saveData() {
+            try {
+                await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_KEY },
+                    body: JSON.stringify(appData)
+                });
+            } catch (e) { alert('บันทึกข้อมูลล้มเหลว!'); }
+        }
+
+        async function saveDiscordSettings() {
+            const url = document.getElementById('discordWebhookInput').value.trim();
+            const roleId = document.getElementById('discordRoleIdInput').value.trim();
+            
+            // บันทึกลง localStorage และ appData
+            localStorage.setItem('DISCORD_WEBHOOK', url);
+            localStorage.setItem('DISCORD_ROLE_ID', roleId);
+            appData.discordWebhook = url;
+            appData.discordRoleId = roleId;
+            
+            addLog(`บันทึกการตั้งค่า Discord Webhook โดย ${currentUser.displayName}`);
+            await saveData();
+            alert('บันทึกตั้งค่า Discord เรียบร้อยแล้ว!');
+        }
+
+        async function register(e) {
+            e.preventDefault();
+            const u = document.getElementById('regUser').value.trim();
+            const p = document.getElementById('regPass').value.trim();
+            const name = document.getElementById('regName').value.trim();
+
+            await loadData();
+            if (appData.users.find(x => x.username === u)) return alert('Username นี้มีคนใช้แล้ว');
+
+            const assignedRole = appData.users.length === 0 ? 'OWNER' : 'PENDING';
+
+            appData.users.push({
+                username: u,
+                password: p,
+                displayName: name,
+                role: assignedRole,
+                customRank: assignedRole === 'PENDING' ? 'รออนุมัติยศ' : '',
+                customColor: 'rose'
+            });
+
+            addLog(`สมัครสมาชิกใหม่: ${name} (@${u})`, 'USER');
+            await saveData();
+            alert('สมัครสมาชิกเรียบร้อยแล้ว!');
+            switchAuthTab('login');
+        }
+
+        async function login(e) {
+            e.preventDefault();
+            const u = document.getElementById('loginUser').value.trim();
+            const p = document.getElementById('loginPass').value.trim();
+
+            await loadData();
+            const user = appData.users.find(x => x.username === u && x.password === p);
+
+            if (user) {
+                currentUser = user;
+                document.getElementById('authSection').classList.add('hidden');
+                document.getElementById('dashboardSection').classList.remove('hidden');
+                document.getElementById('userInfoNav').classList.remove('hidden');
+                document.getElementById('userInfoNav').classList.add('flex');
+                document.getElementById('navDisplayName').innerText = `${currentUser.displayName}`;
+                document.getElementById('navRoleBadge').innerText = `${currentUser.role}`;
+
+                const isAdmin = (currentUser.role === 'OWNER' || currentUser.role === 'ADMIN');
+
+                if (currentUser.role === 'PENDING') {
+                    document.getElementById('pendingNotice').classList.remove('hidden');
+                    document.getElementById('tableSection').classList.add('hidden');
+                    document.getElementById('expenseSection').classList.add('hidden');
+                    document.getElementById('adminPanel').classList.add('hidden');
+                    document.getElementById('adminNotifBtn').classList.add('hidden');
+                } else {
+                    document.getElementById('pendingNotice').classList.add('hidden');
+                    document.getElementById('tableSection').classList.remove('hidden');
+                    document.getElementById('expenseSection').classList.remove('hidden');
+
+                    if (isAdmin) {
+                        document.getElementById('adminPanel').classList.remove('hidden');
+                        document.getElementById('adminActionHeader').classList.remove('hidden');
+                        document.getElementById('expenseAdminActionHeader').classList.remove('hidden');
+                        document.getElementById('adminNotifBtn').classList.remove('hidden');
+                    } else {
+                        document.getElementById('adminPanel').classList.add('hidden');
+                        document.getElementById('adminActionHeader').classList.add('hidden');
+                        document.getElementById('expenseAdminActionHeader').classList.add('hidden');
+                        document.getElementById('adminNotifBtn').classList.add('hidden');
+                    }
+                }
+
+                updateStats();
+                updateLeaderboard();
+                updateAIAnalysis();
+                updateNotifications();
+                updateGoalProgress();
+                renderTable();
+                renderExpenseTable();
+                renderMemberList();
+                renderAuditLogs();
+            } else { alert('Username หรือ Password ไม่ถูกต้อง'); }
+        }
+
+        function logout() { location.reload(); }
+
+        async function addExpense() {
+            if (currentUser.role !== 'OWNER' && currentUser.role !== 'ADMIN') return;
+
+            const title = document.getElementById('expenseTitle').value.trim();
+            const amount = parseInt(document.getElementById('expenseAmount').value);
+            const category = document.getElementById('expenseCategory').value;
+
+            if (!title || !amount || amount <= 0) return alert('กรุณากรอกชื่อรายการและจำนวนเงินรายจ่ายให้ถูกต้อง');
+
+            await loadData();
+
+            appData.expenses.unshift({
+                id: 'exp_' + Date.now(),
+                title: title,
+                amount: amount,
+                category: category,
+                recordedBy: currentUser.displayName,
+                date: new Date().toLocaleDateString('th-TH') + ' ' + new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })
+            });
+
+            document.getElementById('expenseTitle').value = '';
+            document.getElementById('expenseAmount').value = '';
+
+            addLog(`บันทึกรายจ่าย: "${title}" (${category}) จำนวน ${amount.toLocaleString()} บาท โดย ${currentUser.displayName}`, 'PAY');
+            await saveData();
+            playSound('notif');
+            
+            updateStats();
+            updateAIAnalysis();
+            renderExpenseTable();
+            renderAuditLogs();
+            alert('บันทึกรายจ่ายเรียบร้อยแล้ว!');
+        }
+
+        async function deleteExpense(expenseId) {
+            if (currentUser.role !== 'OWNER' && currentUser.role !== 'ADMIN') return;
+
+            if (confirm('คุณแน่ใจหรือไม่ว่าต้องการลบรายการเบิกจ่ายนี้?')) {
+                const target = appData.expenses.find(e => e.id === expenseId);
+                if (target) addLog(`ลบรายการเบิกจ่าย: ${target.title} (${target.amount} ฿)`, 'PAY');
+
+                appData.expenses = appData.expenses.filter(e => e.id !== expenseId);
+                await saveData();
+                
+                updateStats();
+                updateAIAnalysis();
+                renderExpenseTable();
+                renderAuditLogs();
+            }
+        }
+
+        function renderExpenseTable() {
+            if (!currentUser || currentUser.role === 'PENDING') return;
+
+            const tbody = document.getElementById('expenseTable');
+            tbody.innerHTML = '';
+
+            const expenses = appData.expenses || [];
+            const isAdmin = (currentUser.role === 'OWNER' || currentUser.role === 'ADMIN');
+
+            if (expenses.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="${isAdmin ? 7 : 6}" class="p-6 text-center text-xs text-slate-500">ยังไม่มีประวัติรายการเบิกจ่าย</td></tr>`;
+                return;
+            }
+
+            expenses.forEach((e, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-800/40 transition";
+
+                const adminAction = isAdmin ? `
+                    <td class="p-4 text-center">
+                        <button onclick="deleteExpense('${e.id}')" title="ลบรายการ" class="w-8 h-8 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500/20 text-xs transition flex items-center justify-center mx-auto">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                ` : '';
+
+                tr.innerHTML = `
+                    <td class="p-4 text-center text-xs text-slate-500 font-semibold">${index + 1}</td>
+                    <td class="p-4 text-xs font-bold text-purple-300">${escapeHTML(e.category)}</td>
+                    <td class="p-4 text-xs font-bold text-white">${escapeHTML(e.title)}</td>
+                    <td class="p-4 text-xs text-slate-400">${escapeHTML(e.recordedBy)}</td>
+                    <td class="p-4 text-right text-xs font-black text-rose-400">-${e.amount.toLocaleString()} ฿</td>
+                    <td class="p-4 text-center text-[11px] text-slate-500">${e.date}</td>
+                    ${adminAction}
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function deleteUser(username) {
+            if (currentUser.role !== 'OWNER' && currentUser.role !== 'ADMIN') return;
+
+            const target = appData.users.find(u => u.username === username);
+            if (!target) return;
+
+            if (target.role === 'OWNER') return alert('ไม่สามารถลบ OWNER ได้!');
+            if (currentUser.role === 'ADMIN' && target.role === 'ADMIN') return alert('ADMIN ไม่สามารถลบ ADMIN ด้วยกันได้!');
+
+            if (confirm(`คุณแน่ใจหรือไม่ว่าต้องการลบสมาชิก "${target.displayName}" (@${target.username}) ออกจากระบบแก๊ง?`)) {
+                appData.users = appData.users.filter(u => u.username !== username);
+                appData.dues = appData.dues.filter(d => d.username !== username);
+
+                addLog(`ลบสมาชิก: ${target.displayName} (@${username}) โดย ${currentUser.displayName}`, 'USER');
+                await saveData();
+                
+                updateStats();
+                updateLeaderboard();
+                updateAIAnalysis();
+                updateNotifications();
+                updateGoalProgress();
+                renderTable();
+                renderMemberList();
+                renderAuditLogs();
+                alert('ลบสมาชิกออกจากระบบเรียบร้อยแล้ว!');
+            }
+        }
+
+        async function setCustomGoal() {
+            if (currentUser.role !== 'OWNER' && currentUser.role !== 'ADMIN') {
+                return alert('เฉพาะ OWNER หรือ ADMIN เท่านั้นที่ปรับเป้าหมายได้');
+            }
+            const newGoal = prompt('กรอกเป้าหมายยอดเงินคลังแก๊งที่ต้องการ (บาท):', appData.targetGoal || 50000);
+            if (newGoal && !isNaN(newGoal) && parseInt(newGoal) > 0) {
+                appData.targetGoal = parseInt(newGoal);
+                addLog(`ปรับเป้าหมายคลังเป็น ${appData.targetGoal.toLocaleString()} บาท`, 'BILL');
+                await saveData();
+                updateGoalProgress();
+            }
+        }
+
+        function updateGoalProgress() {
+            const dues = appData.dues || [];
+            const totalPaid = dues.filter(d => d.status === 'PAID').reduce((sum, d) => sum + d.amount, 0);
+            const goal = appData.targetGoal || 50000;
+            const percent = Math.min(100, Math.round((totalPaid / goal) * 100));
+
+            document.getElementById('goalPercentBadge').innerText = `${percent}%`;
+            document.getElementById('goalPaidAmount').innerText = totalPaid.toLocaleString();
+            document.getElementById('goalTotalAmount').innerText = goal.toLocaleString();
+
+            const progressBar = document.getElementById('treasuryProgressBar');
+            progressBar.style.width = `${percent}%`;
+        }
+
+        function setTableFilter(filter) {
+            currentFilter = filter;
+            document.getElementById('filterAll').className = filter === 'ALL' ? "px-3 py-1.5 rounded-xl bg-slate-800 text-sky-400 shadow" : "px-3 py-1.5 rounded-xl text-slate-400 hover:text-sky-400 transition";
+            document.getElementById('filterPaid').className = filter === 'PAID' ? "px-3 py-1.5 rounded-xl bg-slate-800 text-emerald-400 shadow" : "px-3 py-1.5 rounded-xl text-slate-400 hover:text-emerald-400 transition";
+            document.getElementById('filterPending').className = filter === 'PENDING' ? "px-3 py-1.5 rounded-xl bg-slate-800 text-rose-400 shadow" : "px-3 py-1.5 rounded-xl text-slate-400 hover:text-rose-400 transition";
+            renderTable();
+        }
+
+        function updateNotifications() {
+            if (!currentUser) return;
+
+            if (currentUser.role === 'OWNER' || currentUser.role === 'ADMIN') {
+                const pendingUsers = appData.users.filter(u => u.role === 'PENDING');
+                const badge = document.getElementById('notifBadge');
+                if (pendingUsers.length > 0) {
+                    badge.innerText = pendingUsers.length;
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.classList.add('hidden');
+                }
+            }
+
+            const userBanner = document.getElementById('userNotificationBanner');
+            if (currentUser.role === 'USER') {
+                const myPendingDues = appData.dues.filter(d => d.username === currentUser.username && d.status === 'PENDING');
+                if (myPendingDues.length > 0) {
+                    const totalPending = myPendingDues.reduce((sum, d) => sum + d.amount, 0);
+                    userBanner.className = "glass-card border border-rose-500/30 p-5 rounded-3xl flex items-center justify-between text-rose-400 text-xs font-semibold shadow-lg";
+                    userBanner.innerHTML = `
+                        <div class="flex items-center gap-3.5">
+                            <i class="fa-solid fa-bell text-rose-500 text-xl animate-bounce"></i>
+                            <div>
+                                <p class="font-bold text-white text-sm">คุณมียอดค้างชำระทั้งหมด ${myPendingDues.length} รายการ!</p>
+                                <p class="text-rose-300">รวมเป็นเงินทั้งสิ้น <span class="text-rose-400 font-black text-sm">${totalPending.toLocaleString()} ฿</span> กรุณาชำระเงินและแจ้งแอดมิน</p>
+                            </div>
+                        </div>
+                    `;
+                    userBanner.classList.remove('hidden');
+                } else {
+                    userBanner.className = "glass-card border border-emerald-500/30 p-5 rounded-3xl flex items-center gap-3 text-emerald-400 text-xs font-semibold";
+                    userBanner.innerHTML = `
+                        <i class="fa-solid fa-circle-check text-emerald-400 text-xl"></i>
+                        <span>ยินดีด้วย! คุณไม่มีรายการค้างชำระเงินในขณะนี้ ✨</span>
+                    `;
+                    userBanner.classList.remove('hidden');
+                }
+            } else {
+                userBanner.classList.add('hidden');
+            }
+        }
+
+        function openPendingUsersModal() {
+            const pendingUsers = appData.users.filter(u => u.role === 'PENDING');
+            const container = document.getElementById('pendingUsersList');
+            container.innerHTML = '';
+
+            if (pendingUsers.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-500 text-center py-6">ไม่มีสมาชิกรอการอนุมัติในขณะนี้ 🎉</p>`;
+            } else {
+                pendingUsers.forEach(u => {
+                    const item = document.createElement('div');
+                    item.className = "bg-slate-950 p-3.5 rounded-2xl border border-slate-800 flex justify-between items-center";
+                    item.innerHTML = `
+                        <div>
+                            <p class="font-bold text-white text-xs">${escapeHTML(u.displayName)}</p>
+                            <p class="text-[10px] text-slate-500">@${escapeHTML(u.username)}</p>
+                        </div>
+                        <button onclick="quickApproveUser('${u.username}')" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-3 py-1.5 rounded-xl text-xs transition">
+                            <i class="fa-solid fa-check"></i> อนุมัติยศ USER
+                        </button>
+                    `;
+                    container.appendChild(item);
+                });
+            }
+
+            document.getElementById('pendingUsersModal').classList.remove('hidden');
+        }
+
+        function closePendingUsersModal() { document.getElementById('pendingUsersModal').classList.add('hidden'); }
+
+        async function quickApproveUser(username) {
+            const target = appData.users.find(u => u.username === username);
+            if (target) {
+                target.role = 'USER';
+                target.customRank = 'สมาชิกแก๊ง';
+                target.customColor = 'sky';
+                addLog(`อนุมัติยศ USER ให้ ${target.displayName}`, 'USER');
+                playSound('notif');
+                await saveData();
+                updateNotifications();
+                openPendingUsersModal();
+                renderTable();
+                renderMemberList();
+                renderAuditLogs();
+            }
+        }
+
+        async function createBill() {
+            const title = document.getElementById('billTitle').value.trim();
+            const amount = parseInt(document.getElementById('billAmount').value);
+
+            if (!title || !amount || amount <= 0) return alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+
+            await loadData();
+            
+            const activeUsers = appData.users.filter(u => u.role !== 'PENDING');
+            
+            activeUsers.forEach(u => {
+                appData.dues.push({
+                    id: 'due_' + Date.now() + '_' + u.username,
+                    username: u.username,
+                    displayName: u.displayName,
+                    title: title,
+                    amount: amount,
+                    status: 'PENDING'
+                });
+            });
+
+            document.getElementById('billTitle').value = '';
+            document.getElementById('billAmount').value = '';
+
+            addLog(`ออกใบทวงเงิน: "${title}" ยอดคนละ ${amount} บาท`, 'BILL');
+            await saveData();
+            playSound('notif');
+            updateStats();
+            updateLeaderboard();
+            updateAIAnalysis();
+            updateNotifications();
+            updateGoalProgress();
+            renderTable();
+            renderAuditLogs();
+            alert('ออกใบเก็บเงินเรียบร้อย!');
+        }
+
+        async function togglePaid(dueId) {
+            if (currentUser.role !== 'OWNER' && currentUser.role !== 'ADMIN') {
+                return alert('เฉพาะ OWNER หรือ ADMIN เท่านั้นที่กดยืนยันการชำระได้');
+            }
+
+            const item = appData.dues.find(d => d.id === dueId);
+            if (item) {
+                if (item.status === 'PAID') {
+                    item.status = 'PENDING';
+                    addLog(`ยกเลิกสถานะจ่ายเงิน: ${item.displayName} - ${item.title}`, 'PAY');
+                } else {
+                    item.status = 'PAID';
+                    addLog(`ยืนยันการชำระเงิน: ${item.displayName} - ${item.title} (${item.amount} ฿)`, 'PAY');
+                    playSound('pay');
+                    confetti({ particleCount: 80, spread: 60, origin: { y: 0.8 } });
+                }
+
+                updateStats();
+                updateLeaderboard();
+                updateAIAnalysis();
+                updateNotifications();
+                updateGoalProgress();
+                renderTable();
+                renderAuditLogs();
+                await saveData();
+            }
+        }
+
+        async function toggleExempt(dueId) {
+            if (currentUser.role !== 'OWNER' && currentUser.role !== 'ADMIN') return;
+
+            const item = appData.dues.find(d => d.id === dueId);
+            if (item) {
+                item.status = item.status === 'EXEMPTED' ? 'PENDING' : 'EXEMPTED';
+                addLog(`เปลี่ยนสถานะยกเว้นบิล: ${item.displayName} - ${item.title}`, 'BILL');
+                updateStats();
+                updateLeaderboard();
+                updateAIAnalysis();
+                updateNotifications();
+                updateGoalProgress();
+                renderTable();
+                renderAuditLogs();
+                await saveData();
+            }
+        }
+
+        async function deleteBill(dueId) {
+            if (currentUser.role !== 'OWNER' && currentUser.role !== 'ADMIN') return;
+
+            if (confirm('คุณแน่ใจหรือไม่ว่าต้องการลบบิลนี้?')) {
+                const item = appData.dues.find(d => d.id === dueId);
+                if (item) addLog(`ลบบิล: ${item.displayName} - ${item.title}`, 'BILL');
+                
+                appData.dues = appData.dues.filter(d => d.id !== dueId);
+                updateStats();
+                updateLeaderboard();
+                updateAIAnalysis();
+                updateNotifications();
+                updateGoalProgress();
+                renderTable();
+                renderAuditLogs();
+                await saveData();
+            }
+        }
+
+        function openRankModal(username) {
+            selectedTargetUser = appData.users.find(u => u.username === username);
+            if (!selectedTargetUser) return;
+
+            document.getElementById('rankModalTargetUser').innerText = `${selectedTargetUser.displayName} (@${selectedTargetUser.username})`;
+            document.getElementById('customRankInput').value = selectedTargetUser.customRank || '';
+            document.getElementById('customRankColor').value = selectedTargetUser.customColor || 'sky';
+
+            if (currentUser.role === 'OWNER') {
+                document.getElementById('roleSelectorContainer').classList.remove('hidden');
+                document.getElementById('userRoleSelect').value = selectedTargetUser.role;
+            } else {
+                document.getElementById('roleSelectorContainer').classList.add('hidden');
+            }
+
+            document.getElementById('rankModal').classList.remove('hidden');
+        }
+
+        function closeRankModal() { document.getElementById('rankModal').classList.add('hidden'); }
+
+        async function saveUserRank() {
+            if (!selectedTargetUser) return;
+
+            selectedTargetUser.customRank = document.getElementById('customRankInput').value.trim();
+            selectedTargetUser.customColor = document.getElementById('customRankColor').value;
+
+            if (currentUser.role === 'OWNER') {
+                selectedTargetUser.role = document.getElementById('userRoleSelect').value;
+            }
+
+            addLog(`ปรับแต่งยศ/สิทธิ์: ${selectedTargetUser.displayName}`, 'USER');
+            closeRankModal();
+            updateStats();
+            updateNotifications();
+            renderTable();
+            renderMemberList();
+            renderAuditLogs();
+            await saveData();
+            alert('บันทึกยศเรียบร้อยแล้ว!');
+        }
+
+        function updateStats() {
+            const dues = appData.dues || [];
+            const users = appData.users || [];
+            const expenses = appData.expenses || [];
+
+            const totalPaid = dues.filter(d => d.status === 'PAID').reduce((sum, d) => sum + d.amount, 0);
+            const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
+            const netBalance = totalPaid - totalExpenses;
+            const pendingAmount = dues.filter(d => d.status === 'PENDING' || !d.status).reduce((sum, d) => sum + d.amount, 0);
+
+            document.getElementById('statTotalPaid').innerText = totalPaid.toLocaleString();
+            document.getElementById('statTotalExpenses').innerText = totalExpenses.toLocaleString();
+            document.getElementById('statNetBalance').innerText = netBalance.toLocaleString();
+            document.getElementById('statPendingAmount').innerText = pendingAmount.toLocaleString();
+            document.getElementById('statUsers').innerText = users.length;
+        }
+
+        function updateLeaderboard() {
+            const dues = appData.dues || [];
+            const userStats = {};
+
+            dues.forEach(d => {
+                if (!userStats[d.displayName]) {
+                    userStats[d.displayName] = { paid: 0, pending: 0 };
+                }
+                if (d.status === 'PAID') userStats[d.displayName].paid += d.amount;
+                else if (d.status === 'PENDING') userStats[d.displayName].pending += d.amount;
+            });
+
+            let topPayer = { name: '-', amount: 0 };
+            let topDebtor = { name: '-', amount: 0 };
+
+            Object.keys(userStats).forEach(name => {
+                if (userStats[name].paid > topPayer.amount) {
+                    topPayer = { name: name, amount: userStats[name].paid };
+                }
+                if (userStats[name].pending > topDebtor.amount) {
+                    topDebtor = { name: name, amount: userStats[name].pending };
+                }
+            });
+
+            document.getElementById('topPayerText').innerText = topPayer.amount > 0 ? `${escapeHTML(topPayer.name)} (${topPayer.amount.toLocaleString()} บาท)` : 'ยังไม่มีข้อมูล';
+            document.getElementById('topDebtorText').innerText = topDebtor.amount > 0 ? `${escapeHTML(topDebtor.name)} (${topDebtor.amount.toLocaleString()} บาท)` : 'ชำระเงินครบหมดทุกคน 🎉';
+        }
+
+        function updateAIAnalysis() {
+            const dues = appData.dues || [];
+            const expenses = appData.expenses || [];
+
+            const totalPaid = dues.filter(d => d.status === 'PAID').reduce((sum, d) => sum + d.amount, 0);
+            const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
+            const netBalance = totalPaid - totalExpenses;
+
+            if (dues.length === 0 && expenses.length === 0) {
+                document.getElementById('aiAnalysisText').innerText = "ยังไม่มีข้อมูลชำระเงินและรายจ่ายในระบบ";
+                return;
+            }
+
+            let msg = "";
+            if (netBalance < 0) {
+                msg = `⚠️ วิกฤตงบประมาณ! รายจ่ายรวม (${totalExpenses.toLocaleString()} ฿) เกินกว่าเงินที่เก็บได้ในคลัง (${totalPaid.toLocaleString()} ฿) ติดลบอยู่ ${Math.abs(netBalance).toLocaleString()} บาท ดำเนินการจัดเก็บเงินด่วน!`;
+            } else {
+                msg = `✅ สภาพคล่องมั่นคง: เก็บเงินได้ ${totalPaid.toLocaleString()} บาท | เบิกจ่ายไป ${totalExpenses.toLocaleString()} บาท | คงเหลือสุทธิพร้อมใช้ ${netBalance.toLocaleString()} บาท`;
+            }
+
+            document.getElementById('aiAnalysisText').innerText = msg;
+        }
+
+        // 🔔 ระบบส่งแจ้งเตือนลง Discord Webhook (แบบแท็กยศ + Embed UI สวยงาม)
+        async function sendDiscordNotification() {
+            const webhookUrl = appData.discordWebhook || localStorage.getItem('DISCORD_WEBHOOK') || '';
+            const roleId = appData.discordRoleId || localStorage.getItem('DISCORD_ROLE_ID') || '';
+
+            if (!webhookUrl) return alert('กรุณาใส่ Discord Webhook URL ในส่วนของ Admin แล้วกดบันทึกก่อนครับ!');
+
+            const pendingDues = appData.dues.filter(d => d.status === 'PENDING' || !d.status);
+            if (pendingDues.length === 0) return alert('ไม่มีรายการค้างชำระในขณะนี้ 🎉');
+
+            let debtText = "";
+            let totalAmount = 0;
+            pendingDues.forEach((d, index) => {
+                debtText += `**${index + 1}. ${d.displayName}**\n↳ รายการ: *${d.title}* | ยอด: \`${d.amount.toLocaleString()} บาท\`\n\n`;
+                totalAmount += d.amount;
+            });
+
+            const roleMention = roleId ? `<@&${roleId}> ` : '';
+
+            const embedData = {
+                username: "ระบบคลังเงินแก๊ง | MONEY GANG Liberate[LR] ",
+                avatar_url: "https://cdn-icons-png.flaticon.com/512/2489/2489756.png",
+                content: `${roleMention}🚨 **ประกาศแจ้งเตือนค้างชำระเงินคลังประจำสัปดาห์!**`,
+                embeds: [{
+                    title: "📋 รายการค้างชำระที่ต้องดำเนินการด่วน",
+                    description: "กรุณาตรวจสอบรายชื่อและชำระเงินเข้าคลังแก๊งตามรายการด้านล่างเพื่อรักษาสิทธิ์ครับ! 🔥",
+                    color: 15158332,
+                    fields: [
+                        { name: "📌 รายชื่อสมาชิกและยอดค้างชำระ", value: debtText || "ไม่มีรายการค้างชำระ", inline: false },
+                        { name: "💰 ยอดค้างรวมทั้งหมด", value: `\`\`\`yaml\n${totalAmount.toLocaleString()} บาท\n\`\`\``, inline: true },
+                        { name: "📊 จำนวนคนดองเงิน", value: `\`\`\`yaml\n${pendingDues.length} รายการ\n\`\`\``, inline: true }
+                    ],
+                    footer: { text: "หากชำระแล้วกรุณาแจ้งแอดมินเพื่ออัปเดตสถานะ | GANG TREASURY PRO" },
+                    timestamp: new Date().toISOString()
+                }]
+            };
+
+            try {
+                const res = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(embedData)
+                });
+                if (res.ok) alert('ส่งข้อความทวงหนี้ไปยัง Discord เรียบร้อย! 🚀');
+                else alert('ส่งไม่สำเร็จ ตรวจสอบ Webhook URL อีกครั้ง');
+            } catch (err) { alert('เกิดข้อผิดพลาดในการส่ง Webhook'); }
+        }
+
+        async function sendDiscordAuditReport() {
+            const webhookUrl = appData.discordWebhook || localStorage.getItem('DISCORD_WEBHOOK') || '';
+            if (!webhookUrl) return alert('กรุณาใส่ Discord Webhook URL ในส่วนของ Admin แล้วกดบันทึกก่อนครับ!');
+
+            const dues = appData.dues || [];
+            const expenses = appData.expenses || [];
+
+            const totalPaid = dues.filter(d => d.status === 'PAID').reduce((sum, d) => sum + d.amount, 0);
+            const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
+            const netBalance = totalPaid - totalExpenses;
+            const pendingAmount = dues.filter(d => d.status === 'PENDING').reduce((sum, d) => sum + d.amount, 0);
+
+            const embedData = {
+                username: "GANG AUDITOR BOT",
+                avatar_url: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+                embeds: [{
+                    title: "📊 รายงานสรุปภาพรวมคลังเงิน & รายจ่ายแก๊ง",
+                    color: 5814783,
+                    fields: [
+                        { name: "💵 ยอดเก็บได้แล้ว", value: `${totalPaid.toLocaleString()} บาท`, inline: true },
+                        { name: "💸 ยอดรายจ่ายรวม", value: `${totalExpenses.toLocaleString()} บาท`, inline: true },
+                        { name: "💎 เงินคลังคงเหลือสุทธิ", value: `**${netBalance.toLocaleString()} บาท**`, inline: true },
+                        { name: "❌ ยอดค้างชำระรวม", value: `${pendingAmount.toLocaleString()} บาท`, inline: true },
+                        { name: "👥 สมาชิกทั้งหมด", value: `${appData.users.length} คน`, inline: true }
+                    ],
+                    footer: { text: "รายงานอัตโนมัติจาก MONEY GANG Liberate[LR]" },
+                    timestamp: new Date().toISOString()
+                }]
+            };
+
+            try {
+                await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(embedData)
+                });
+                alert('ส่งรายงานสรุปคลังเข้า Discord เรียบร้อยแล้ว!');
+            } catch (err) { alert('เกิดข้อผิดพลาดในการส่ง Webhook'); }
+        }
+
+        function getUserBadge(username) {
+            const user = appData.users.find(u => u.username === username);
+            if (!user) return '';
+
+            let roleBadge = '';
+            if (user.role === 'OWNER') roleBadge = `<span class="text-[9px] bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2 py-0.5 rounded-full font-black mr-1">👑 OWNER</span>`;
+            else if (user.role === 'ADMIN') roleBadge = `<span class="text-[9px] bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 px-2 py-0.5 rounded-full font-black mr-1">🛡️ ADMIN</span>`;
+            else if (user.role === 'PENDING') roleBadge = `<span class="text-[9px] bg-rose-500/20 text-rose-300 border border-rose-500/40 px-2 py-0.5 rounded-full font-black mr-1">⏳ รออนุมัติ</span>`;
+
+            if (user.customRank) {
+                const colorMap = {
+                    amber: 'bg-amber-500/10 text-amber-400 border-amber-500/30',
+                    sky: 'bg-sky-500/10 text-sky-400 border-sky-500/30',
+                    emerald: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
+                    rose: 'bg-rose-500/10 text-rose-400 border-rose-500/30',
+                    purple: 'bg-purple-500/10 text-purple-400 border-purple-500/30'
+                };
+                const cls = colorMap[user.customColor] || colorMap.sky;
+                return `${roleBadge}<span class="text-[10px] ${cls} px-2 py-0.5 rounded-md border font-bold">✨ ${escapeHTML(user.customRank)}</span>`;
+            }
+
+            return roleBadge;
+        }
+
+        function renderMemberList() {
+            if (!currentUser || (currentUser.role !== 'OWNER' && currentUser.role !== 'ADMIN')) return;
+
+            const tbody = document.getElementById('memberListTable');
+            tbody.innerHTML = '';
+
+            const users = appData.users || [];
+            users.forEach((u, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-800/40 transition";
+
+                tr.innerHTML = `
+                    <td class="p-3.5 text-center text-xs text-slate-500 font-semibold">${index + 1}</td>
+                    <td class="p-3.5 font-bold text-white text-xs">${escapeHTML(u.displayName)}</td>
+                    <td class="p-3.5 text-slate-400 text-xs">@${escapeHTML(u.username)}</td>
+                    <td class="p-3.5 text-xs font-bold text-amber-400">${u.role}</td>
+                    <td class="p-3.5 text-xs">${getUserBadge(u.username)}</td>
+                    <td class="p-3.5 text-center">
+                        <div class="flex justify-center gap-2">
+                            <button onclick="openRankModal('${u.username}')" title="แต่งตั้งยศ" class="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 px-3 py-1.5 rounded-xl text-xs font-semibold transition">
+                                <i class="fa-solid fa-pen-to-square"></i> แก้ไข
+                            </button>
+                            <button onclick="deleteUser('${u.username}')" title="ลบสมาชิก" class="bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 px-2.5 py-1.5 rounded-xl text-xs font-semibold transition">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // 📜 ระบบจัดการ Audit Log
+        function setLogFilter(filter) {
+            currentLogFilter = filter;
+            document.getElementById('logFilterAll').className = filter === 'ALL' ? "px-3 py-1 rounded-xl bg-slate-800 text-indigo-400 shadow" : "px-3 py-1 rounded-xl text-slate-400 hover:text-indigo-400 transition";
+            document.getElementById('logFilterPay').className = filter === 'PAY' ? "px-3 py-1 rounded-xl bg-slate-800 text-emerald-400 shadow" : "px-3 py-1 rounded-xl text-slate-400 hover:text-emerald-400 transition";
+            document.getElementById('logFilterBill').className = filter === 'BILL' ? "px-3 py-1 rounded-xl bg-slate-800 text-sky-400 shadow" : "px-3 py-1 rounded-xl text-slate-400 hover:text-sky-400 transition";
+            document.getElementById('logFilterUser').className = filter === 'USER' ? "px-3 py-1 rounded-xl bg-slate-800 text-amber-400 shadow" : "px-3 py-1 rounded-xl text-slate-400 hover:text-amber-400 transition";
+            renderAuditLogs();
+        }
+
+        function renderAuditLogs() {
+            const container = document.getElementById('auditLogList');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const searchInput = document.getElementById('logSearchInput');
+            const search = searchInput ? searchInput.value.toLowerCase() : '';
+            let logs = appData.logs || [];
+
+            if (currentLogFilter === 'PAY') {
+                logs = logs.filter(l => l.category === 'PAY' || l.action.includes('ชำระ') || l.action.includes('เบิก') || l.action.includes('จ่าย'));
+            } else if (currentLogFilter === 'BILL') {
+                logs = logs.filter(l => l.category === 'BILL' || l.action.includes('ใบทวง') || l.action.includes('บิล'));
+            } else if (currentLogFilter === 'USER') {
+                logs = logs.filter(l => l.category === 'USER' || l.action.includes('สมาชิก') || l.action.includes('อนุมัติ') || l.action.includes('ยศ'));
+            }
+
+            const filteredLogs = logs.filter(l => 
+                l.action.toLowerCase().includes(search) || 
+                l.time.toLowerCase().includes(search)
+            );
+
+            if (filteredLogs.length === 0) {
+                container.innerHTML = `<p class="text-[11px] text-slate-500 text-center py-4">ไม่พบประวัติกิจกรรมที่ตรงตามเงื่อนไข</p>`;
+                return;
+            }
+
+            filteredLogs.forEach(l => {
+                let tagClass = "bg-slate-800 text-slate-300 border-slate-700";
+                let tagText = "ทั่วไป";
+
+                if (l.action.includes('ยืนยันการชำระ') || l.action.includes('อนุมัติ')) {
+                    tagClass = "bg-emerald-500/10 text-emerald-400 border-emerald-500/30";
+                    tagText = "อนุมัติ";
+                } else if (l.action.includes('ลบ') || l.action.includes('ยกเลิก')) {
+                    tagClass = "bg-rose-500/10 text-rose-400 border-rose-500/30";
+                    tagText = "ลบ/ยกเลิก";
+                } else if (l.action.includes('บันทึกรายจ่าย')) {
+                    tagClass = "bg-purple-500/10 text-purple-400 border-purple-500/30";
+                    tagText = "รายจ่าย";
+                } else if (l.action.includes('ออกใบทวง')) {
+                    tagClass = "bg-sky-500/10 text-sky-400 border-sky-500/30";
+                    tagText = "สร้างบิล";
+                } else if (l.action.includes('ยศ') || l.action.includes('สิทธิ์')) {
+                    tagClass = "bg-amber-500/10 text-amber-400 border-amber-500/30";
+                    tagText = "สิทธิ์";
+                }
+
+                const div = document.createElement('div');
+                div.className = "bg-slate-950/70 hover:bg-slate-900/80 p-3 rounded-2xl border border-slate-800/80 flex flex-col sm:flex-row justify-between sm:items-center gap-2 transition";
+                div.innerHTML = `
+                    <div class="flex items-center gap-2.5">
+                        <span class="text-[9px] px-2 py-0.5 rounded-md border font-black ${tagClass}">${tagText}</span>
+                        <span class="text-slate-200 text-xs font-medium">${escapeHTML(l.action)}</span>
+                    </div>
+                    <span class="text-[10px] text-slate-500 flex items-center gap-1 self-end sm:self-center">
+                        <i class="fa-regular fa-clock text-[9px]"></i> ${l.time}
+                    </span>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        async function clearAuditLogs() {
+            if (currentUser.role !== 'OWNER' && currentUser.role !== 'ADMIN') return alert('เฉพาะ ADMIN/OWNER เท่านั้นที่ล้าง Log ได้');
+            if (confirm('คุณแน่ใจหรือไม่ว่าต้องการล้างประวัติกิจกรรมทั้งหมด?')) {
+                appData.logs = [];
+                addLog(`ล้างประวัติกิจกรรมทั้งหมด โดย ${currentUser.displayName}`);
+                await saveData();
+                renderAuditLogs();
+                alert('ล้างประวัติกิจกรรมเรียบร้อยแล้ว!');
+            }
+        }
+
+        function downloadLogs() {
+            const logs = appData.logs || [];
+            if (logs.length === 0) return alert('ไม่มีข้อมูล Log ให้ดาวน์โหลด');
+
+            let csvContent = "\uFEFFลำดับ,ข้อความกิจกรรม,วันที่และเวลา\n";
+            logs.forEach((l, index) => {
+                csvContent += `"${index + 1}","${l.action.replace(/"/g, '""')}","${l.time}"\n`;
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `gang_audit_logs_${Date.now()}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function renderTable() {
+            if (!currentUser || currentUser.role === 'PENDING') return;
+
+            const tbody = document.getElementById('duesTable');
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            tbody.innerHTML = '';
+
+            let list = appData.dues || [];
+
+            if (currentUser.role === 'USER') {
+                list = list.filter(d => d.username === currentUser.username);
+            }
+
+            if (currentFilter === 'PAID') {
+                list = list.filter(d => d.status === 'PAID');
+            } else if (currentFilter === 'PENDING') {
+                list = list.filter(d => d.status === 'PENDING' || !d.status);
+            }
+
+            const filtered = list.filter(d => 
+                d.displayName.toLowerCase().includes(search) || 
+                d.title.toLowerCase().includes(search)
+            );
+
+            const isAdmin = (currentUser.role === 'OWNER' || currentUser.role === 'ADMIN');
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="${isAdmin ? 6 : 5}" class="p-6 text-center text-xs text-slate-500">ยังไม่มีรายการชำระเงิน</td></tr>`;
+                return;
+            }
+
+            filtered.forEach((d, index) => {
+                const row = document.createElement('tr');
+                row.className = "hover:bg-slate-800/40 transition";
+                
+                let statusBtn = '';
+                const currentStatus = d.status || 'PENDING';
+
+                if (currentStatus === 'PAID') {
+                    statusBtn = `<button onclick="togglePaid('${d.id}')" class="px-3.5 py-1.5 rounded-2xl text-xs font-extrabold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 transition">
+                        <i class="fa-solid fa-check"></i> จ่ายแล้ว
+                    </button>`;
+                } else if (currentStatus === 'EXEMPTED') {
+                    statusBtn = `<button onclick="toggleExempt('${d.id}')" class="px-3.5 py-1.5 rounded-2xl text-xs font-extrabold bg-slate-800 text-slate-400 border border-slate-700 hover:bg-slate-700 transition">
+                        <i class="fa-solid fa-ban"></i> ยกเว้น
+                    </button>`;
+                } else {
+                    statusBtn = `<button onclick="togglePaid('${d.id}')" class="px-3.5 py-1.5 rounded-2xl text-xs font-extrabold bg-rose-500/10 text-rose-400 border border-rose-500/30 hover:bg-rose-500/20 transition">
+                        <i class="fa-solid fa-xmark"></i> ยังไม่จ่าย
+                    </button>`;
+                }
+
+                const adminActions = isAdmin ? `
+                    <td class="p-4 text-center">
+                        <div class="flex items-center justify-center gap-2">
+                            <button onclick="openRankModal('${d.username}')" title="แต่งตั้งยศ" class="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 text-xs transition flex items-center justify-center">
+                                <i class="fa-solid fa-crown"></i>
+                            </button>
+                            <button onclick="toggleExempt('${d.id}')" title="เว้นการชำระเงิน" class="w-8 h-8 rounded-xl bg-sky-500/10 text-sky-400 border border-sky-500/20 hover:bg-sky-500/20 text-xs transition flex items-center justify-center">
+                                <i class="fa-solid fa-forward"></i>
+                            </button>
+                            <button onclick="deleteBill('${d.id}')" title="ลบบิล" class="w-8 h-8 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500/20 text-xs transition flex items-center justify-center">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                ` : '';
+
+                row.innerHTML = `
+                    <td class="p-4 text-center text-xs text-slate-500 font-semibold">${index + 1}</td>
+                    <td class="p-4">
+                        <div class="font-bold text-white text-xs">${escapeHTML(d.displayName)}</div>
+                        <div class="mt-1">${getUserBadge(d.username)}</div>
+                    </td>
+                    <td class="p-4 text-slate-300 text-xs font-medium">${escapeHTML(d.title)}</td>
+                    <td class="p-4 text-right font-black ${currentStatus === 'EXEMPTED' ? 'line-through text-slate-500' : 'text-sky-400'}">${d.amount.toLocaleString()} ฿</td>
+                    <td class="p-4 text-center">${statusBtn}</td>
+                    ${adminActions}
+                `;
+                tbody.appendChild(row);
+            });
+        }
+    </script>
+</body>
+</html>
