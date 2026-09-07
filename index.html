@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GANG TREASURY PRO - ระบบคลังเงิน & รายจ่ายแก๊ง</title>
+    <title>GANG TREASURY PRO - LIBERATE [LR]</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -11,33 +11,60 @@
     <style>
         body { 
             font-family: 'Kanit', sans-serif; 
-            background: radial-gradient(circle at top, #0f172a 0%, #080c14 100%);
+            background: radial-gradient(circle at top, #0b1329 0%, #030712 100%);
             background-attachment: fixed;
         }
         .glass-card {
             background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(16px);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
         }
-        .glow-emerald { box-shadow: 0 0 25px rgba(16, 185, 129, 0.15); }
-        .glow-sky { box-shadow: 0 0 25px rgba(14, 165, 233, 0.15); }
-        .glow-rose { box-shadow: 0 0 25px rgba(244, 63, 94, 0.15); }
-        .glow-amber { box-shadow: 0 0 25px rgba(245, 158, 11, 0.15); }
-        .glow-purple { box-shadow: 0 0 25px rgba(168, 85, 247, 0.15); }
+        .glass-input {
+            background: rgba(3, 7, 18, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s ease;
+        }
+        .glass-input:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+            background: rgba(15, 23, 42, 0.8);
+        }
+        .glow-emerald { box-shadow: 0 0 30px rgba(16, 185, 129, 0.12); }
+        .glow-sky { box-shadow: 0 0 30px rgba(14, 165, 233, 0.12); }
+        .glow-rose { box-shadow: 0 0 30px rgba(244, 63, 94, 0.12); }
+        .glow-amber { box-shadow: 0 0 30px rgba(245, 158, 11, 0.12); }
+        .glow-purple { box-shadow: 0 0 30px rgba(168, 85, 247, 0.12); }
         
-        .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(3, 7, 18, 0.5); }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        .login-glow-card {
+            background: rgba(11, 19, 41, 0.85);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            box-shadow: 0 0 50px rgba(14, 165, 233, 0.15), inset 0 0 20px rgba(245, 158, 11, 0.05);
+        }
+        .logo-float {
+            animation: float 4s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(56, 189, 248, 0.4));
+        }
+        @keyframes float {
+            0% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-8px) scale(1.02); }
+            100% { transform: translateY(0px) scale(1); }
+        }
     </style>
 </head>
-<body class="text-slate-100 min-h-screen pb-12">
+<body class="text-slate-100 min-h-screen pb-12 selection:bg-sky-500 selection:text-white">
 
     <nav class="sticky top-0 z-40 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800/80">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-200 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-amber-500/20">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-200 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-amber-500/20 hover:scale-105 transition-transform">
                     <i class="fa-solid fa-vault text-xl"></i>
                 </div>
                 <div>
@@ -47,11 +74,11 @@
             </div>
 
             <div id="userInfoNav" class="hidden items-center gap-3">
-                <button id="refreshHeaderBtn" onclick="manualRefresh()" title="รีเฟรชข้อมูลหน้าเว็บ" class="p-2.5 bg-slate-900 hover:bg-slate-800 text-sky-400 rounded-2xl border border-slate-800 transition flex items-center justify-center">
+                <button id="refreshHeaderBtn" onclick="manualRefresh()" title="รีเฟรชข้อมูลหน้าเว็บ" class="p-2.5 bg-slate-900/80 hover:bg-slate-800 text-sky-400 rounded-2xl border border-slate-800 transition flex items-center justify-center hover:border-sky-500/50">
                     <i id="navRefreshIcon" class="fa-solid fa-rotate-right text-sm"></i>
                 </button>
 
-                <button id="adminNotifBtn" onclick="openPendingUsersModal()" class="hidden relative p-2.5 bg-slate-900 hover:bg-slate-800 text-amber-400 rounded-2xl border border-slate-800 transition">
+                <button id="adminNotifBtn" onclick="openPendingUsersModal()" class="hidden relative p-2.5 bg-slate-900/80 hover:bg-slate-800 text-amber-400 rounded-2xl border border-slate-800 transition hover:border-amber-500/50">
                     <i class="fa-solid fa-bell text-sm"></i>
                     <span id="notifBadge" class="hidden absolute -top-1 -right-1 bg-rose-500 text-white text-[9px] font-black w-5 h-5 rounded-full flex items-center justify-center animate-bounce shadow-md">0</span>
                 </button>
@@ -61,7 +88,7 @@
                     <span id="navRoleBadge" class="text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-slate-800 text-amber-400 border border-amber-500/30"></span>
                 </div>
 
-                <button onclick="logout()" title="ออกจากระบบ" class="p-2.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-2xl transition">
+                <button onclick="logout()" title="ออกจากระบบ" class="p-2.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-2xl transition hover:scale-105">
                     <i class="fa-solid fa-power-off text-sm"></i>
                 </button>
             </div>
@@ -70,40 +97,44 @@
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
 
-        <div id="authSection" class="max-w-md mx-auto my-12 glass-card rounded-3xl p-8 border border-slate-800 shadow-2xl relative overflow-hidden">
-            <div class="text-center mb-8">
-                <div class="w-20 h-20 bg-gradient-to-tr from-sky-500/20 to-indigo-500/20 border border-sky-500/30 text-sky-400 rounded-3xl flex items-center justify-center text-3xl mx-auto mb-4 shadow-inner">
-                    <i class="fa-solid fa-shield-halved"></i>
+        <!-- AUTH SECTION -->
+        <div id="authSection" class="max-w-md mx-auto my-8 login-glow-card rounded-3xl p-8 relative overflow-hidden transition-all duration-500">
+            <div class="absolute -top-24 -left-24 w-48 h-48 bg-sky-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="text-center mb-6">
+                <div class="relative w-36 h-36 mx-auto mb-2 logo-float flex items-center justify-center">
+                    <img src="https://file.io/dummy_path_or_inline" id="gangLogoImg" alt="LIBERATE GANG LOGO" class="w-full h-full object-contain rounded-2xl drop-shadow-[0_0_25px_rgba(56,189,248,0.5)]" onerror="this.onerror=null; this.src='image_77ee27.jpg';">
                 </div>
-                <h2 class="text-2xl font-black text-white">เข้าสู่ระบบคลังเงิน</h2>
-                <p class="text-xs text-slate-400 mt-1">ยินดีต้อนรับสู่ระบบบริหารคลังเงินแก๊ง</p>
+                <h2 class="text-2xl font-black tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-sky-300 to-indigo-300">LIBERATE [LR]</h2>
+                <p class="text-[11px] text-slate-400 mt-1 uppercase tracking-widest font-semibold">GANG TREASURY MANAGEMENT</p>
             </div>
 
-            <div class="flex p-1 bg-slate-950/80 rounded-2xl mb-6 text-xs font-bold border border-slate-800">
-                <button id="tabLogin" onclick="switchAuthTab('login')" class="flex-1 py-3 rounded-xl bg-slate-800 text-sky-400 shadow">เข้าสู่ระบบ</button>
-                <button id="tabReg" onclick="switchAuthTab('reg')" class="flex-1 py-3 rounded-xl text-slate-400 transition">สมัครสมาชิก</button>
+            <div class="flex p-1 bg-slate-950/80 rounded-2xl mb-6 text-xs font-bold border border-slate-800/80 shadow-inner">
+                <button id="tabLogin" onclick="switchAuthTab('login')" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-sky-500/20 to-indigo-500/20 text-sky-400 border border-sky-500/30 shadow">เข้าสู่ระบบ</button>
+                <button id="tabReg" onclick="switchAuthTab('reg')" class="flex-1 py-3 rounded-xl text-slate-400 hover:text-slate-200 transition">สมัครสมาชิก</button>
             </div>
 
             <form id="loginForm" onsubmit="login(event)" class="space-y-4">
                 <div class="relative">
-                    <i class="fa-solid fa-user absolute left-4 top-3.5 text-slate-500 text-xs"></i>
-                    <input id="loginUser" type="text" required placeholder="Username" class="w-full pl-10 pr-4 py-3 bg-slate-950/60 border border-slate-800 rounded-2xl text-xs text-white focus:outline-none focus:border-sky-500 transition">
+                    <i class="fa-solid fa-user absolute left-4 top-3.5 text-sky-400/70 text-xs"></i>
+                    <input id="loginUser" type="text" required placeholder="Username" class="w-full pl-10 pr-4 py-3 glass-input rounded-2xl text-xs text-white focus:outline-none">
                 </div>
                 <div class="relative">
-                    <i class="fa-solid fa-key absolute left-4 top-3.5 text-slate-500 text-xs"></i>
-                    <input id="loginPass" type="password" required placeholder="Password" class="w-full pl-10 pr-4 py-3 bg-slate-950/60 border border-slate-800 rounded-2xl text-xs text-white focus:outline-none focus:border-sky-500 transition">
+                    <i class="fa-solid fa-key absolute left-4 top-3.5 text-sky-400/70 text-xs"></i>
+                    <input id="loginPass" type="password" required placeholder="Password" class="w-full pl-10 pr-4 py-3 glass-input rounded-2xl text-xs text-white focus:outline-none">
                 </div>
-                <button type="submit" class="w-full bg-gradient-to-r from-sky-500 via-indigo-600 to-indigo-700 hover:from-sky-400 hover:to-indigo-600 text-white py-3.5 rounded-2xl font-bold text-xs shadow-lg shadow-sky-500/20 transition">
-                    🚀 เข้าสู่ระบบ
+                <button type="submit" class="w-full bg-gradient-to-r from-sky-500 via-indigo-600 to-amber-500 hover:from-sky-400 hover:to-amber-400 text-white py-3.5 rounded-2xl font-black text-xs shadow-lg shadow-sky-500/20 transition hover:scale-[1.01] active:scale-[0.99] tracking-wider uppercase">
+                    🚀 ENTER SYSTEM
                 </button>
             </form>
 
             <form id="regForm" onsubmit="register(event)" class="hidden space-y-4">
-                <input id="regUser" type="text" required placeholder="Username" class="w-full p-3 bg-slate-950/60 border border-slate-800 rounded-2xl text-xs text-white focus:outline-none focus:border-sky-500 transition">
-                <input id="regPass" type="password" required placeholder="Password" class="w-full p-3 bg-slate-950/60 border border-slate-800 rounded-2xl text-xs text-white focus:outline-none focus:border-sky-500 transition">
-                <input id="regName" type="text" required placeholder="ชื่อที่แสดง (Display Name)" class="w-full p-3 bg-slate-950/60 border border-slate-800 rounded-2xl text-xs text-white focus:outline-none focus:border-sky-500 transition">
-                <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 py-3.5 rounded-2xl font-bold text-xs shadow-lg shadow-emerald-500/20 transition">
-                    ✨ สมัครสมาชิก (สถานะรออนุมัติ)
+                <input id="regUser" type="text" required placeholder="Username" class="w-full p-3 glass-input rounded-2xl text-xs text-white focus:outline-none">
+                <input id="regPass" type="password" required placeholder="Password" class="w-full p-3 glass-input rounded-2xl text-xs text-white focus:outline-none">
+                <input id="regName" type="text" required placeholder="ชื่อที่แสดง (Display Name)" class="w-full p-3 glass-input rounded-2xl text-xs text-white focus:outline-none">
+                <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 py-3.5 rounded-2xl font-bold text-xs shadow-lg shadow-emerald-500/20 transition hover:scale-[1.01] active:scale-[0.99]">
+                    ✨ สมัครสมาชิก (รออนุมัติสิทธิ์)
                 </button>
             </form>
         </div>
@@ -116,9 +147,10 @@
                 <div class="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-lg flex-shrink-0">
                     <i class="fa-solid fa-clock-rotate-left animate-spin"></i>
                 </div>
-                <span>บัญชีของคุณอยู่ระหว่าง **รอรับการอนุมัติยศ** จาก Owner/Admin (สามารถดูเฉพาะยอดเงินรวมของคลังได้)</span>
+                <span>บัญชีของคุณอยู่ระหว่าง **รอรับการอนุมัติสิทธิ์** จาก Owner/Admin (สามารถดูเฉพาะยอดเงินรวมของคลังได้)</span>
             </div>
 
+            <!-- GOAL SECTION -->
             <div class="glass-card rounded-3xl p-6 border border-slate-800/80 glow-sky">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-3">
                     <div>
@@ -128,16 +160,17 @@
                         </div>
                         <p id="goalSubtitle" class="text-xs text-slate-400 mt-1">ชำระแล้ว <span id="goalPaidAmount" class="text-emerald-400 font-bold">0</span> จากเป้าหมายทั้งหมด <span id="goalTotalAmount" class="text-white font-bold">0</span> บาท</p>
                     </div>
-                    <button onclick="setCustomGoal()" class="text-[11px] bg-slate-800 hover:bg-slate-700 text-sky-400 border border-slate-700 px-3.5 py-1.5 rounded-xl font-bold transition">
-                        ⚙️ ตั้งเป้าหมายคลัง
+                    <button onclick="setCustomGoal()" class="text-[11px] bg-slate-800/80 hover:bg-slate-700 text-sky-400 border border-slate-700 px-3.5 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-sliders"></i> ตั้งเป้าหมายคลัง
                     </button>
                 </div>
 
-                <div class="w-full bg-slate-950 rounded-full h-4 p-0.5 border border-slate-800 overflow-hidden relative">
+                <div class="w-full bg-slate-950/80 rounded-full h-4 p-0.5 border border-slate-800 overflow-hidden relative">
                     <div id="treasuryProgressBar" class="bg-gradient-to-r from-emerald-500 via-teal-400 to-sky-400 h-full rounded-full transition-all duration-1000 shadow-lg shadow-emerald-500/30" style="width: 0%"></div>
                 </div>
             </div>
 
+            <!-- AI FINANCIAL ADVISOR -->
             <div class="glass-card p-6 rounded-3xl border border-indigo-500/30 flex flex-col md:flex-row justify-between items-start md:items-center gap-5">
                 <div class="flex items-start gap-3.5">
                     <div class="w-11 h-11 rounded-2xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-400 flex items-center justify-center text-xl mt-0.5 flex-shrink-0">
@@ -153,15 +186,16 @@
                 </div>
                 
                 <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
-                    <button id="btnSendDebtDiscord" onclick="sendDiscordNotification()" class="hidden flex-1 md:flex-none bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-400/30 px-4 py-2.5 rounded-2xl font-bold text-xs transition items-center justify-center gap-2 shadow-lg shadow-indigo-600/20">
+                    <button id="btnSendDebtDiscord" onclick="sendDiscordNotification()" class="hidden flex-1 md:flex-none bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-400/30 px-4 py-2.5 rounded-2xl font-bold text-xs transition items-center justify-center gap-2 shadow-lg shadow-indigo-600/20 hover:scale-[1.02]">
                         <i class="fa-brands fa-discord text-sm"></i> ส่งทวงหนี้ลง Discord
                     </button>
-                    <button onclick="sendDiscordAuditReport()" class="flex-1 md:flex-none bg-purple-600 hover:bg-purple-500 text-white border border-purple-400/30 px-4 py-2.5 rounded-2xl font-bold text-xs transition flex items-center justify-center gap-2 shadow-lg shadow-purple-600/20">
+                    <button onclick="sendDiscordAuditReport()" class="flex-1 md:flex-none bg-purple-600 hover:bg-purple-500 text-white border border-purple-400/30 px-4 py-2.5 rounded-2xl font-bold text-xs transition flex items-center justify-center gap-2 shadow-lg shadow-purple-600/20 hover:scale-[1.02]">
                         <i class="fa-solid fa-chart-pie"></i> ส่งรายงานคลัง
                     </button>
                 </div>
             </div>
 
+            <!-- STATS CARDS -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                 <div class="glass-card p-5 rounded-3xl border border-emerald-500/40 flex justify-between items-center relative overflow-hidden glow-emerald">
                     <div class="absolute inset-y-0 left-0 w-1.5 bg-emerald-400"></div>
@@ -224,6 +258,7 @@
                 </div>
             </div>
 
+            <!-- LEADERBOARD CARDS -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div class="glass-card p-5 rounded-3xl border border-emerald-500/30 flex items-center gap-4">
                     <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-2xl border border-emerald-500/30 flex-shrink-0">
@@ -246,11 +281,9 @@
                 </div>
             </div>
 
+            <!-- ADMIN PANEL -->
             <div id="adminPanel" class="hidden space-y-6">
-                
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    
-                    <!-- ออกใบทวงเงินแก๊ง (รองรับทั้งรายบุคคลและทุกคน) -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="glass-card rounded-3xl border border-sky-500/30 p-6 shadow-xl space-y-4">
                         <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wider flex items-center gap-2">
                             <i class="fa-solid fa-file-invoice-dollar text-sm"></i> ออกใบทวงเงินแก๊ง (สร้างรายการเรียกเก็บ)
@@ -258,13 +291,13 @@
                         <div class="space-y-3">
                             <div>
                                 <label class="text-[11px] font-semibold text-slate-400 mb-1 block">เลือกสมาชิกที่ต้องการสั่งเก็บเงิน:</label>
-                                <select id="billTargetUser" class="w-full p-3 bg-slate-950/70 border border-slate-800 rounded-2xl text-xs text-white focus:outline-none focus:border-sky-500 transition">
+                                <select id="billTargetUser" class="w-full p-3 glass-input rounded-2xl text-xs text-white focus:outline-none">
                                     <option value="ALL">🌐 สมาชิกทุกคนในแก๊ง (All Members)</option>
                                 </select>
                             </div>
-                            <input id="billTitle" type="text" placeholder="ชื่อรายการ (เช่น ค่าส่วนกลางสัปดาห์ที่ 1 / ค่าปรับยุทธการ)" class="w-full p-3 bg-slate-950/70 border border-slate-800 rounded-2xl text-xs text-white focus:outline-none focus:border-sky-500 transition">
-                            <input id="billAmount" type="number" min="1" placeholder="จำนวนเงิน (บาท)" class="w-full p-3 bg-slate-950/70 border border-slate-800 rounded-2xl text-xs text-white focus:outline-none focus:border-sky-500 transition">
-                            <button onclick="createBill()" class="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold py-3 rounded-2xl text-xs transition shadow-lg shadow-sky-500/20">
+                            <input id="billTitle" type="text" placeholder="ชื่อรายการ (เช่น ค่าส่วนกลางสัปดาห์ที่ 1 / ค่าปรับยุทธการ)" class="w-full p-3 glass-input rounded-2xl text-xs text-white focus:outline-none">
+                            <input id="billAmount" type="number" min="1" placeholder="จำนวนเงิน (บาท)" class="w-full p-3 glass-input rounded-2xl text-xs text-white focus:outline-none">
+                            <button onclick="createBill()" class="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold py-3 rounded-2xl text-xs transition shadow-lg shadow-sky-500/20 hover:scale-[1.01] active:scale-[0.99]">
                                 + สร้างรายการเรียกเก็บเงิน
                             </button>
                         </div>
@@ -275,10 +308,10 @@
                             <i class="fa-solid fa-cart-shopping text-sm"></i> บันทึกรายการเบิก/รายจ่ายแก๊ง
                         </h3>
                         <div class="space-y-3">
-                            <input id="expenseTitle" type="text" placeholder="ชื่อรายการเบิกจ่าย (เช่น ซื้อยา/ค่าอาวุธ/ค่าสวัสดิการ)" class="w-full p-3 bg-slate-950/70 border border-slate-800 rounded-2xl text-xs text-white focus:outline-none focus:border-purple-500 transition">
+                            <input id="expenseTitle" type="text" placeholder="ชื่อรายการเบิกจ่าย (เช่น ซื้อยา/ค่าอาวุธ/ค่าสวัสดิการ)" class="w-full p-3 glass-input rounded-2xl text-xs text-white focus:outline-none">
                             <div class="grid grid-cols-2 gap-2">
-                                <input id="expenseAmount" type="number" min="1" placeholder="จำนวนเงิน (บาท)" class="p-3 bg-slate-950/70 border border-slate-800 rounded-2xl text-xs text-white focus:outline-none focus:border-purple-500 transition">
-                                <select id="expenseCategory" class="p-3 bg-slate-950/70 border border-slate-800 rounded-2xl text-xs text-white focus:outline-none focus:border-purple-500 transition">
+                                <input id="expenseAmount" type="number" min="1" placeholder="จำนวนเงิน (บาท)" class="p-3 glass-input rounded-2xl text-xs text-white focus:outline-none">
+                                <select id="expenseCategory" class="p-3 glass-input rounded-2xl text-xs text-white focus:outline-none">
                                     <option value="💊 ค่ายา/ของใช้">💊 ค่ายา/ของใช้</option>
                                     <option value="🔫 ค่าอาวุธ/อุปกรณ์">🔫 ค่าอาวุธ/อุปกรณ์</option>
                                     <option value="🤝 ค่าสวัสดิการ/พันธมิตร">🤝 ค่าสวัสดิการ/พันธมิตร</option>
@@ -286,12 +319,32 @@
                                     <option value="📦 อื่นๆ">📦 อื่นๆ</option>
                                 </select>
                             </div>
-                            <button onclick="addExpense()" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 rounded-2xl text-xs transition shadow-lg shadow-purple-600/20">
+                            <button onclick="addExpense()" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 rounded-2xl text-xs transition shadow-lg shadow-purple-600/20 hover:scale-[1.01] active:scale-[0.99]">
                                 - บันทึกรายจ่ายลงคลัง
                             </button>
                         </div>
                     </div>
 
+                    <div class="glass-card rounded-3xl border border-amber-500/30 p-6 shadow-xl space-y-4">
+                        <h3 class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-box-archive text-sm"></i> ฝากไอเทมเข้าคลังแก๊ง
+                        </h3>
+                        <div class="space-y-3">
+                            <input id="itemTitle" type="text" placeholder="ชื่อไอเทม (เช่น ยาแก้ปวด, เกราะ, อาวุธ)" class="w-full p-3 glass-input rounded-2xl text-xs text-white focus:outline-none">
+                            <div class="grid grid-cols-2 gap-2">
+                                <input id="itemAmount" type="number" min="1" placeholder="จำนวน (ชิ้น)" class="p-3 glass-input rounded-2xl text-xs text-white focus:outline-none">
+                                <select id="itemCategory" class="p-3 glass-input rounded-2xl text-xs text-white focus:outline-none">
+                                    <option value="💊 ยา/เสบียง">💊 ยา/เสบียง</option>
+                                    <option value="🔫 อาวุธ/กระสุน">🔫 อาวุธ/กระสุน</option>
+                                    <option value="🛡️ เกราะ/อุปกรณ์">🛡️ เกราะ/อุปกรณ์</option>
+                                    <option value="📦 ทรัพยากร/วัตถุดิบ">📦 ทรัพยากร/วัตถุดิบ</option>
+                                </select>
+                            </div>
+                            <button onclick="addVaultItem()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3 rounded-2xl text-xs transition shadow-lg shadow-amber-500/20 hover:scale-[1.01] active:scale-[0.99]">
+                                + บันทึกการฝากไอเทม
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="glass-card rounded-3xl border border-slate-800 p-5 shadow-xl space-y-3">
@@ -299,30 +352,31 @@
                         <i class="fa-brands fa-discord"></i> Discord Webhook & Role ID (ตั้งค่าแจ้งเตือนดิสคอร์ด)
                     </label>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-                        <input id="discordWebhookInput" type="url" placeholder="https://discord.com/api/webhooks/..." class="md:col-span-2 p-2.5 bg-slate-950/70 border border-slate-800 rounded-2xl text-xs text-slate-300 focus:outline-none focus:border-indigo-500 transition">
-                        <input id="discordRoleIdInput" type="text" placeholder="Role ID (เช่น 123456789)" class="p-2.5 bg-slate-950/70 border border-slate-800 rounded-2xl text-xs text-slate-300 focus:outline-none focus:border-indigo-500 transition">
+                        <input id="discordWebhookInput" type="url" placeholder="https://discord.com/api/webhooks/..." class="md:col-span-2 p-2.5 glass-input rounded-2xl text-xs text-slate-300 focus:outline-none">
+                        <input id="discordRoleIdInput" type="text" placeholder="Role ID (เช่น 123456789)" class="p-2.5 glass-input rounded-2xl text-xs text-slate-300 focus:outline-none">
                     </div>
                     <button onclick="saveDiscordSettings()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-2.5 rounded-2xl text-xs font-bold transition">
                         💾 บันทึกตั้งค่า Discord
                     </button>
                 </div>
 
+                <!-- USER MANAGEMENT -->
                 <div class="glass-card rounded-3xl border border-amber-500/30 p-6 shadow-xl space-y-5">
                     <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
                         <div>
                             <h3 class="text-sm font-bold text-amber-400 flex items-center gap-2">
-                                <i class="fa-solid fa-users-gear"></i> ระบบจัดการสิทธิ์สมาชิก & ยศตกแต่ง (USER MANAGEMENT)
+                                <i class="fa-solid fa-users-gear"></i> ระบบจัดการสิทธิ์สมาชิก (USER MANAGEMENT)
                             </h3>
-                            <p class="text-xs text-slate-400 mt-0.5">อนุมัติสมาชิก กำหนดสิทธิ์ Admin/Owner และตกแต่งยศฉายาแก๊ง</p>
+                            <p class="text-xs text-slate-400 mt-0.5">อนุมัติสมาชิก และกำหนดระดับสิทธิ์ Admin/Owner</p>
                         </div>
                         
                         <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto">
                             <div class="relative flex-1 sm:w-48">
                                 <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-500 text-xs"></i>
-                                <input id="memberSearchInput" oninput="renderMemberList()" type="text" placeholder="ค้นหาสมาชิก..." class="w-full pl-8 pr-3 py-1.5 bg-slate-950/80 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500 transition">
+                                <input id="memberSearchInput" oninput="renderMemberList()" type="text" placeholder="ค้นหาสมาชิก..." class="w-full pl-8 pr-3 py-1.5 glass-input rounded-xl text-xs text-white focus:outline-none">
                             </div>
                             
-                            <select id="memberRoleFilter" onchange="renderMemberList()" class="p-1.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-amber-300 focus:outline-none">
+                            <select id="memberRoleFilter" onchange="renderMemberList()" class="p-1.5 glass-input rounded-xl text-xs text-amber-300 focus:outline-none">
                                 <option value="ALL">ทุกระดับสิทธิ์</option>
                                 <option value="OWNER">👑 OWNER</option>
                                 <option value="ADMIN">🛡️ ADMIN</option>
@@ -359,7 +413,6 @@
                                     <th class="p-3.5">ชื่อที่แสดง</th>
                                     <th class="p-3.5">Username</th>
                                     <th class="p-3.5">ระดับสิทธิ์</th>
-                                    <th class="p-3.5">ยศ/ฉายา</th>
                                     <th class="p-3.5 text-center w-48">การจัดการ</th>
                                 </tr>
                             </thead>
@@ -368,6 +421,7 @@
                     </div>
                 </div>
 
+                <!-- AUDIT LOG -->
                 <div class="glass-card rounded-3xl border border-slate-800 p-6 shadow-xl space-y-4">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
                         <div>
@@ -378,7 +432,7 @@
                         </div>
                         
                         <div class="flex items-center gap-2">
-                            <button onclick="downloadLogs()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-sky-400 rounded-xl text-[11px] font-bold border border-slate-700 transition flex items-center gap-1.5">
+                            <button onclick="downloadLogs()" class="px-3 py-1.5 bg-slate-800/80 hover:bg-slate-700 text-sky-400 rounded-xl text-[11px] font-bold border border-slate-700 transition flex items-center gap-1.5">
                                 <i class="fa-solid fa-download"></i> ส่งออก CSV
                             </button>
                             <button onclick="clearAuditLogs()" class="px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-xl text-[11px] font-bold border border-rose-500/30 transition flex items-center gap-1.5">
@@ -392,12 +446,13 @@
                             <button id="logFilterAll" onclick="setLogFilter('ALL')" class="px-3 py-1 rounded-xl bg-slate-800 text-indigo-400 shadow">ทั้งหมด</button>
                             <button id="logFilterPay" onclick="setLogFilter('PAY')" class="px-3 py-1 rounded-xl text-slate-400 hover:text-emerald-400 transition">การเงิน</button>
                             <button id="logFilterBill" onclick="setLogFilter('BILL')" class="px-3 py-1 rounded-xl text-slate-400 hover:text-sky-400 transition">ใบทวง</button>
-                            <button id="logFilterUser" onclick="setLogFilter('USER')" class="px-3 py-1 rounded-xl text-slate-400 hover:text-amber-400 transition">สมาชิก</button>
+                            <button id="logFilterItem" onclick="setLogFilter('ITEM')" class="px-3 py-1 rounded-xl text-slate-400 hover:text-amber-400 transition">เบิกไอเทม</button>
+                            <button id="logFilterUser" onclick="setLogFilter('USER')" class="px-3 py-1 rounded-xl text-slate-400 hover:text-purple-400 transition">สมาชิก</button>
                         </div>
 
                         <div class="relative sm:w-64">
                             <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-500 text-[11px]"></i>
-                            <input id="logSearchInput" oninput="renderAuditLogs()" type="text" placeholder="ค้นหาประวัติกิจกรรม..." class="w-full pl-8 pr-3 py-1.5 bg-slate-950/80 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-indigo-500 transition">
+                            <input id="logSearchInput" oninput="renderAuditLogs()" type="text" placeholder="ค้นหาประวัติกิจกรรม..." class="w-full pl-8 pr-3 py-1.5 glass-input rounded-xl text-xs text-white focus:outline-none">
                         </div>
                     </div>
 
@@ -406,6 +461,110 @@
 
             </div>
 
+            <!-- GANG MONEY WITHDRAWAL SYSTEM (ระบบเบิกเงินแก๊ง) -->
+            <div id="moneyWithdrawSection" class="glass-card rounded-3xl border border-emerald-500/30 p-6 shadow-xl space-y-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-lg border border-emerald-500/20">
+                            <i class="fa-solid fa-hand-holding-dollar"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-black text-white">ระบบเบิกเงินคลังแก๊ง (GANG MONEY WITHDRAWAL)</h2>
+                            <p class="text-xs text-slate-400">สมาชิกสามารถยื่นคำขอเบิกเงินจากคลังแก๊งได้ (สมาชิกกดขอเบิก -> แอนมินอนุมัติ)</p>
+                        </div>
+                    </div>
+                    <button onclick="openMoneyWithdrawModal()" class="px-4 py-2.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shadow-lg shadow-emerald-500/20 transition flex items-center gap-2">
+                        <i class="fa-solid fa-plus-circle"></i> ยื่นคำขอเบิกเงินแก๊ง
+                    </button>
+                </div>
+
+                <div class="pt-2">
+                    <div class="flex items-center gap-2 mb-4">
+                        <h3 class="text-sm font-black text-emerald-400 flex items-center gap-2">
+                            <i class="fa-solid fa-file-invoice-dollar text-base"></i> รายการคำขอเบิกเงินแก๊ง
+                        </h3>
+                        <span id="pendingMoneyWithdrawBadge" class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">0 รายการค้าง</span>
+                    </div>
+
+                    <div class="overflow-x-auto custom-scrollbar">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-950/80 text-slate-400 text-[11px] uppercase border-b border-slate-800">
+                                <tr>
+                                    <th class="p-3.5 text-center w-12">#</th>
+                                    <th class="p-3.5">ผู้ขอเบิก</th>
+                                    <th class="p-3.5">รายการ/เหตุผลที่ขอเบิก</th>
+                                    <th class="p-3.5 text-right">จำนวนเงิน</th>
+                                    <th class="p-3.5 text-center">วันที่เบิก</th>
+                                    <th class="p-3.5 text-center">สถานะ</th>
+                                    <th class="p-3.5 text-center w-40">การจัดการ (ADMIN)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="moneyWithdrawRequestsTable" class="divide-y divide-slate-800/60"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GANG ITEM VAULT -->
+            <div id="itemVaultSection" class="glass-card rounded-3xl border border-amber-500/30 p-6 shadow-xl space-y-6">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-lg border border-amber-500/20">
+                            <i class="fa-solid fa-boxes-stacked"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-black text-white">คลังไอเทมแก๊ง (GANG ITEM VAULT)</h2>
+                            <p class="text-xs text-slate-400">รายการไอเทมและทรัพยากรทั้งหมดในคลังแก๊ง (สมาชิกกดขอเบิก -> แอดมินตรวจสอบอนุมัติ)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-950/80 text-slate-400 text-[11px] uppercase border-b border-slate-800">
+                            <tr>
+                                <th class="p-4 text-center w-12">#</th>
+                                <th class="p-4">หมวดหมู่</th>
+                                <th class="p-4">ชื่อไอเทม</th>
+                                <th class="p-4 text-right">จำนวนคงเหลือ</th>
+                                <th class="p-4">ผู้ฝากลงคลัง</th>
+                                <th class="p-4 text-center">วันที่ฝากล่าสุด</th>
+                                <th class="p-4 text-center w-32">ทำรายการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="itemVaultTable" class="divide-y divide-slate-800/60"></tbody>
+                    </table>
+                </div>
+
+                <!-- ตารางคำขอเบิกไอเทม (WITHDRAWAL REQUESTS TABLE) -->
+                <div class="pt-6 border-t border-slate-800/80">
+                    <div class="flex items-center gap-2 mb-4">
+                        <h3 class="text-sm font-black text-amber-400 flex items-center gap-2">
+                            <i class="fa-solid fa-clipboard-list text-base"></i> รายการคำขอเบิกไอเทม (WITHDRAWAL REQUESTS)
+                        </h3>
+                        <span id="pendingWithdrawBadge" class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">0 รายการค้าง</span>
+                    </div>
+
+                    <div class="overflow-x-auto custom-scrollbar">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-950/80 text-slate-400 text-[11px] uppercase border-b border-slate-800">
+                                <tr>
+                                    <th class="p-3.5 text-center w-12">#</th>
+                                    <th class="p-3.5">ผู้ขอเบิก</th>
+                                    <th class="p-3.5">รายการไอเทม</th>
+                                    <th class="p-3.5 text-center">จำนวนที่เบิก</th>
+                                    <th class="p-3.5 text-center">วันที่เบิก</th>
+                                    <th class="p-3.5 text-center">สถานะ</th>
+                                    <th class="p-3.5 text-center w-40">การจัดการ (ADMIN)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="withdrawRequestsTable" class="divide-y divide-slate-800/60"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DUES TABLE -->
             <div id="tableSection" class="glass-card rounded-3xl border border-slate-800 p-6 shadow-xl">
                 <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
                     <div class="flex items-center gap-3">
@@ -427,10 +586,10 @@
 
                         <div class="relative flex-1 sm:w-56">
                             <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500 text-xs"></i>
-                            <input id="searchInput" oninput="renderTable()" type="text" placeholder="ค้นหาชื่อสมาชิก..." class="w-full pl-9 pr-4 py-2 bg-slate-950/80 border border-slate-800 rounded-2xl text-xs text-white focus:outline-none focus:border-sky-500 transition">
+                            <input id="searchInput" oninput="renderTable()" type="text" placeholder="ค้นหาชื่อสมาชิก..." class="w-full pl-9 pr-4 py-2 glass-input rounded-2xl text-xs text-white focus:outline-none">
                         </div>
 
-                        <button id="refreshBtn" onclick="manualRefresh()" title="รีเฟรชข้อมูล" class="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-2xl text-xs font-semibold transition border border-slate-700 flex items-center justify-center">
+                        <button id="refreshBtn" onclick="manualRefresh()" title="รีเฟรชข้อมูล" class="p-2.5 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-2xl text-xs font-semibold transition border border-slate-700 flex items-center justify-center">
                             <i id="refreshIcon" class="fa-solid fa-rotate-right"></i>
                         </button>
                     </div>
@@ -441,8 +600,9 @@
                         <thead class="bg-slate-950/80 text-slate-400 text-[11px] uppercase border-b border-slate-800">
                             <tr>
                                 <th class="p-4 text-center w-12">#</th>
-                                <th class="p-4">สมาชิก & ยศแก๊ง</th>
+                                <th class="p-4">สมาชิก</th>
                                 <th class="p-4">รายการ</th>
+                                <th class="p-4 text-center">วันที่ลงบิล</th>
                                 <th class="p-4 text-right">ยอดเงิน</th>
                                 <th class="p-4 text-center w-36">สถานะชำระเงิน</th>
                                 <th id="adminActionHeader" class="p-4 text-center w-36 hidden">การจัดการ (ADMIN)</th>
@@ -453,6 +613,7 @@
                 </div>
             </div>
 
+            <!-- EXPENSE TABLE -->
             <div id="expenseSection" class="glass-card rounded-3xl border border-purple-500/30 p-6 shadow-xl">
                 <div class="flex justify-between items-center mb-6">
                     <div class="flex items-center gap-3">
@@ -488,29 +649,119 @@
 
     </div>
 
+    <!-- MODAL เบิกเงินคลัง -->
+    <div id="moneyWithdrawModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 z-50 transition-all duration-300">
+        <div class="glass-card w-full max-w-md rounded-3xl p-6 border border-emerald-500/30 text-left shadow-2xl relative">
+            <button onclick="closeMoneyWithdrawModal()" class="absolute top-5 right-5 text-slate-500 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <h3 class="text-lg font-black text-emerald-400 mb-1 flex items-center gap-2">
+                <i class="fa-solid fa-hand-holding-dollar"></i> ยื่นคำขอเบิกเงินออกจากคลัง
+            </h3>
+            <p class="text-xs text-slate-400 mb-4">ระบบจะส่งรายการเบิกไปยังแอดมินเพื่อรอการตรวจสอบและกดอนุมัติ</p>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs font-semibold text-slate-300">ชื่อรายการ / เรื่องที่ขอเบิกเงิน:</label>
+                    <input id="moneyWithdrawTitleInput" type="text" placeholder="เช่น ค่าสั่งซื้ออาวุธล็อตใหญ่ / ค่ายาฉุกเฉิน" class="w-full mt-1.5 p-3 glass-input rounded-2xl text-xs text-white focus:outline-none">
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-xs font-semibold text-slate-300">จำนวนเงินที่ขอเบิก (บาท):</label>
+                        <input id="moneyWithdrawAmountInput" type="number" min="1" placeholder="ระบุยอดเงิน" class="w-full mt-1.5 p-3 glass-input rounded-2xl text-xs text-white focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-slate-300">หมวดหมู่รายจ่าย:</label>
+                        <select id="moneyWithdrawCategoryInput" class="w-full mt-1.5 p-3 glass-input rounded-2xl text-xs text-white focus:outline-none">
+                            <option value="💊 ค่ายา/ของใช้">💊 ค่ายา/ของใช้</option>
+                            <option value="🔫 ค่าอาวุธ/อุปกรณ์">🔫 ค่าอาวุธ/อุปกรณ์</option>
+                            <option value="🤝 ค่าสวัสดิการ/พันธมิตร">🤝 ค่าสวัสดิการ/พันธมิตร</option>
+                            <option value="⚖️ ค่าปรับ/ประกันตัว">⚖️ ค่าปรับ/ประกันตัว</option>
+                            <option value="📦 อื่นๆ">📦 อื่นๆ</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button onclick="confirmMoneyWithdraw()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 py-3.5 rounded-2xl font-bold text-xs transition shadow-lg shadow-emerald-500/20 hover:scale-[1.01] active:scale-[0.99]">
+                    💸 ส่งคำขอเบิกเงินแก๊ง
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL เบิกไอเทมคลัง -->
+    <div id="withdrawModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 z-50 transition-all duration-300">
+        <div class="glass-card w-full max-w-md rounded-3xl p-6 border border-amber-500/30 text-left shadow-2xl relative">
+            <button onclick="closeWithdrawModal()" class="absolute top-5 right-5 text-slate-500 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <h3 class="text-lg font-black text-amber-400 mb-1 flex items-center gap-2">
+                <i class="fa-solid fa-box-open"></i> ส่งคำขอเบิกไอเทมออกจากคลัง
+            </h3>
+            <p class="text-xs text-slate-400 mb-4">ระบบจะส่งรายการไปยังแอดมินเพื่อรอการกดตรวจสอบและอนุมัติ</p>
+
+            <div class="space-y-4">
+                <div class="p-4 bg-slate-950/70 rounded-2xl border border-slate-800">
+                    <p class="text-[10px] text-slate-400 uppercase font-bold">ชื่อไอเทม</p>
+                    <p id="withdrawItemTitle" class="text-sm font-black text-white mt-0.5">-</p>
+                    <div class="flex justify-between items-center mt-3 pt-2 border-t border-slate-800/80">
+                        <span class="text-xs text-slate-400">จำนวนคงเหลือในคลัง:</span>
+                        <span id="withdrawItemStock" class="text-sm font-black text-amber-400">0 ชิ้น</span>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-xs font-semibold text-slate-300">จำนวนที่ต้องการเบิก:</label>
+                    <input id="withdrawAmountInput" type="number" min="1" placeholder="ใส่จำนวนที่เบิก" class="w-full mt-1.5 p-3 glass-input rounded-2xl text-xs text-white focus:outline-none">
+                </div>
+
+                <button onclick="confirmWithdrawItem()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 py-3.5 rounded-2xl font-bold text-xs transition shadow-lg shadow-amber-500/20 hover:scale-[1.01] active:scale-[0.99]">
+                    📦 ส่งคำขอเบิกไอเทม
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CUSTOM ALERT MODAL -->
+    <div id="customAlertModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 z-50 transition-all duration-300">
+        <div id="customAlertCard" class="glass-card w-full max-w-sm rounded-3xl p-6 border text-center shadow-2xl relative transform transition-all scale-95 opacity-0">
+            <div id="customAlertIconBg" class="w-16 h-16 rounded-3xl flex items-center justify-center text-3xl mx-auto mb-4 border">
+                <i id="customAlertIcon" class="fa-solid fa-circle-check"></i>
+            </div>
+            <h3 id="customAlertTitle" class="text-lg font-black text-white mb-2">แจ้งเตือน</h3>
+            <p id="customAlertMessage" class="text-xs text-slate-300 mb-6 leading-relaxed">รายละเอียดการแจ้งเตือน</p>
+            <button onclick="closeAlertModal()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 rounded-2xl text-xs border border-slate-700 transition">
+                ตกลง
+            </button>
+        </div>
+    </div>
+
+    <!-- PENDING USERS MODAL -->
     <div id="pendingUsersModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
         <div class="glass-card w-full max-w-lg rounded-3xl p-6 border border-slate-800 text-left shadow-2xl relative">
             <button onclick="closePendingUsersModal()" class="absolute top-5 right-5 text-slate-500 hover:text-white">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
             <h3 class="text-lg font-black text-amber-400 mb-1 flex items-center gap-2">
-                <i class="fa-solid fa-user-clock"></i> สมาชิกรอการอนุมัติยศ
+                <i class="fa-solid fa-user-clock"></i> สมาชิกรอการอนุมัติสิทธิ์
             </h3>
-            <p class="text-xs text-slate-400 mb-4">อนุมัติยศ USER เพื่อให้สมาชิกใช้งานตารางคลังเงินได้</p>
+            <p class="text-xs text-slate-400 mb-4">อนุมัติสิทธิ์ USER เพื่อให้สมาชิกใช้งานตารางคลังเงินได้</p>
 
             <div id="pendingUsersList" class="space-y-2 max-h-80 overflow-y-auto custom-scrollbar pr-1"></div>
         </div>
     </div>
 
+    <!-- RANK MODAL -->
     <div id="rankModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
         <div class="glass-card w-full max-w-md rounded-3xl p-6 border border-slate-800 text-left shadow-2xl relative">
             <button onclick="closeRankModal()" class="absolute top-5 right-5 text-slate-500 hover:text-white">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
             <h3 class="text-lg font-black text-white mb-1 flex items-center gap-2">
-                <i class="fa-solid fa-crown text-amber-400"></i> จัดการสิทธิ์ & ยศสมาชิก
+                <i class="fa-solid fa-crown text-amber-400"></i> จัดการระดับสิทธิ์สมาชิก
             </h3>
-            <p class="text-xs text-slate-400 mb-5">อนุมัติยศ ตั้งสิทธิ์แอดมิน และฉายาประจำตัว</p>
+            <p class="text-xs text-slate-400 mb-5">อนุมัติสิทธิ์ และตั้งระดับสิทธิ์ผู้ใช้งาน</p>
 
             <div class="space-y-4">
                 <div>
@@ -518,9 +769,14 @@
                     <p id="rankModalTargetUser" class="text-sm font-bold text-sky-400 mt-0.5"></p>
                 </div>
 
+                <div>
+                    <label class="text-xs font-semibold text-slate-400">ชื่อที่แสดง (Display Name):</label>
+                    <input id="editDisplayNameInput" type="text" placeholder="กรอกชื่อที่แสดงใหม่" class="w-full mt-1.5 p-3 glass-input rounded-2xl text-xs text-white focus:outline-none">
+                </div>
+
                 <div id="roleSelectorContainer" class="hidden">
-                    <label class="text-xs font-semibold text-amber-400">ระดับสิทธิ์ผู้ใช้งาน (OWNER ONLY):</label>
-                    <select id="userRoleSelect" class="w-full mt-1.5 p-3 bg-slate-950 border border-slate-800 rounded-2xl text-xs text-white focus:outline-none focus:border-amber-500">
+                    <label class="text-xs font-semibold text-amber-400">ระดับสิทธิ์ผู้ใช้งาน (ADMIN / OWNER):</label>
+                    <select id="userRoleSelect" class="w-full mt-1.5 p-3 glass-input rounded-2xl text-xs text-white focus:outline-none">
                         <option value="PENDING">⏳ PENDING (รออนุมัติ - เห็นเฉพาะยอดเงินคลัง)</option>
                         <option value="USER">👤 USER (สมาชิกทั่วไป)</option>
                         <option value="ADMIN">🛡️ ADMIN (ผู้ดูแลคลัง)</option>
@@ -528,22 +784,8 @@
                     </select>
                 </div>
 
-                <div>
-                    <label class="text-xs font-semibold text-slate-400">ฉายา/ชื่อยศตกแต่ง:</label>
-                    <input id="customRankInput" type="text" placeholder="เช่น ราชาสายเปย์, เจ้าพ่อดองเงิน" class="w-full mt-1.5 p-3 bg-slate-950 border border-slate-800 rounded-2xl text-xs text-white focus:outline-none focus:border-sky-500">
-                </div>
-                <div>
-                    <label class="text-xs font-semibold text-slate-400">สีของป้ายยศ:</label>
-                    <select id="customRankColor" class="w-full mt-1.5 p-3 bg-slate-950 border border-slate-800 rounded-2xl text-xs text-white focus:outline-none focus:border-sky-500">
-                        <option value="amber">🟡 สีทอง (VIP / สายเปย์)</option>
-                        <option value="sky">🔵 สีฟ้า (สมาชิกกิตติมศักดิ์)</option>
-                        <option value="emerald">🟢 สีเขียว (ชำระไว)</option>
-                        <option value="rose">🔴 สีแดง (สายดอง)</option>
-                        <option value="purple">🟣 สีม่วง (ลึลับ)</option>
-                    </select>
-                </div>
-                <button onclick="saveUserRank()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 py-3.5 rounded-2xl font-bold text-xs transition shadow-lg shadow-amber-500/20 mt-2">
-                    💾 บันทึกการตั้งค่ายศ
+                <button onclick="saveUserRank()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 py-3.5 rounded-2xl font-bold text-xs transition shadow-lg shadow-amber-500/20 mt-2 hover:scale-[1.01] active:scale-[0.99]">
+                    💾 บันทึกการตั้งค่า
                 </button>
             </div>
         </div>
@@ -553,14 +795,53 @@
         const JSONBIN_KEY = localStorage.getItem('JSONBIN_KEY') || '$2a$10$AfzyQQmCefVFTjHqSh6DtumodBBZrQNtjgbd4Z66ktronMXh3.1Zu';
         const BIN_ID = localStorage.getItem('BIN_ID') || '6a9c4e92da38895dfe3d38ca';
 
-        let appData = { users: [], dues: [], expenses: [], logs: [], targetGoal: 50000, discordWebhook: '', discordRoleId: '' };
+        let appData = { users: [], dues: [], expenses: [], items: [], withdrawRequests: [], moneyWithdrawRequests: [], logs: [], targetGoal: 50000, discordWebhook: '', discordRoleId: '' };
         let currentUser = null;
         let selectedTargetUser = null;
+        let selectedItemForWithdraw = null;
         let currentFilter = 'ALL';
         let currentLogFilter = 'ALL';
         let autoRefreshInterval = null;
 
-        // Security: XSS Prevention
+        function showAlertModal(title, message, type = 'info') {
+            const modal = document.getElementById('customAlertModal');
+            const card = document.getElementById('customAlertCard');
+            const titleEl = document.getElementById('customAlertTitle');
+            const msgEl = document.getElementById('customAlertMessage');
+            const iconBg = document.getElementById('customAlertIconBg');
+            const icon = document.getElementById('customAlertIcon');
+
+            titleEl.innerText = title;
+            msgEl.innerText = message;
+
+            if (type === 'success') {
+                iconBg.className = "w-16 h-16 rounded-3xl flex items-center justify-center text-3xl mx-auto mb-4 bg-emerald-500/20 text-emerald-400 border border-emerald-500/40";
+                icon.className = "fa-solid fa-circle-check";
+            } else if (type === 'error') {
+                iconBg.className = "w-16 h-16 rounded-3xl flex items-center justify-center text-3xl mx-auto mb-4 bg-rose-500/20 text-rose-400 border border-rose-500/40";
+                icon.className = "fa-solid fa-circle-xmark";
+            } else {
+                iconBg.className = "w-16 h-16 rounded-3xl flex items-center justify-center text-3xl mx-auto mb-4 bg-sky-500/20 text-sky-400 border border-sky-500/40";
+                icon.className = "fa-solid fa-circle-info";
+            }
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                card.classList.remove('scale-95', 'opacity-0');
+                card.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeAlertModal() {
+            const modal = document.getElementById('customAlertModal');
+            const card = document.getElementById('customAlertCard');
+            card.classList.remove('scale-100', 'opacity-100');
+            card.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 200);
+        }
+
         function escapeHTML(str) {
             if (str === null || str === undefined) return '';
             return String(str)
@@ -571,7 +852,6 @@
                 .replace(/'/g, '&#039;');
         }
 
-        // Security: Cryptographically Strong Unique ID
         function generateUniqueId(prefix = 'id') {
             if (window.crypto && window.crypto.randomUUID) {
                 return prefix + '_' + window.crypto.randomUUID();
@@ -579,7 +859,6 @@
             return prefix + '_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
         }
 
-        // Security Check: Role Authorization
         function isAdminUser() {
             return currentUser && (currentUser.role === 'OWNER' || currentUser.role === 'ADMIN');
         }
@@ -626,13 +905,13 @@
             if (tab === 'login') {
                 document.getElementById('loginForm').classList.remove('hidden');
                 document.getElementById('regForm').classList.add('hidden');
-                document.getElementById('tabLogin').className = "flex-1 py-3 rounded-xl bg-slate-800 text-sky-400 shadow";
-                document.getElementById('tabReg').className = "flex-1 py-3 rounded-xl text-slate-400 transition";
+                document.getElementById('tabLogin').className = "flex-1 py-3 rounded-xl bg-gradient-to-r from-sky-500/20 to-indigo-500/20 text-sky-400 border border-sky-500/30 shadow";
+                document.getElementById('tabReg').className = "flex-1 py-3 rounded-xl text-slate-400 hover:text-slate-200 transition";
             } else {
                 document.getElementById('loginForm').classList.add('hidden');
                 document.getElementById('regForm').classList.remove('hidden');
-                document.getElementById('tabReg').className = "flex-1 py-3 rounded-xl bg-slate-800 text-emerald-400 shadow";
-                document.getElementById('tabLogin').className = "flex-1 py-3 rounded-xl text-slate-400 transition";
+                document.getElementById('tabReg').className = "flex-1 py-3 rounded-xl bg-gradient-to-r from-emerald-500/20 to-teal-500/20 text-emerald-400 border border-emerald-500/30 shadow";
+                document.getElementById('tabLogin').className = "flex-1 py-3 rounded-xl text-slate-400 hover:text-slate-200 transition";
             }
         }
 
@@ -654,8 +933,20 @@
                 if(!appData.users) appData.users = [];
                 if(!appData.dues) appData.dues = [];
                 if(!appData.expenses) appData.expenses = [];
+                if(!appData.items) appData.items = [];
+                if(!appData.withdrawRequests) appData.withdrawRequests = [];
+                if(!appData.moneyWithdrawRequests) appData.moneyWithdrawRequests = [];
                 if(!appData.logs) appData.logs = [];
                 if(!appData.targetGoal) appData.targetGoal = 50000;
+
+                if (currentUser) {
+                    const latestMe = appData.users.find(u => u.username === currentUser.username);
+                    if (latestMe) {
+                        currentUser = latestMe;
+                        document.getElementById('navDisplayName').innerText = `${currentUser.displayName}`;
+                        document.getElementById('navRoleBadge').innerText = `${currentUser.role}`;
+                    }
+                }
 
                 const savedWebhook = appData.discordWebhook || localStorage.getItem('DISCORD_WEBHOOK') || '';
                 const savedRoleId = appData.discordRoleId || localStorage.getItem('DISCORD_ROLE_ID') || '';
@@ -672,6 +963,9 @@
                 updateGoalProgress();
                 renderTable();
                 renderExpenseTable();
+                renderVaultTable();
+                renderWithdrawRequestsTable();
+                renderMoneyWithdrawRequestsTable();
                 renderMemberList();
                 renderAuditLogs();
             } catch (e) { 
@@ -714,11 +1008,11 @@
                     headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_KEY },
                     body: JSON.stringify(appData)
                 });
-            } catch (e) { alert('บันทึกข้อมูลล้มเหลว!'); }
+            } catch (e) { showAlertModal('ผิดพลาด', 'บันทึกข้อมูลล้มเหลว!', 'error'); }
         }
 
         async function saveDiscordSettings() {
-            if (!isAdminUser()) return alert('ไม่มีสิทธิ์ดำเนินการ');
+            if (!isAdminUser()) return showAlertModal('ปฏิเสธการเข้าถึง', 'ไม่มีสิทธิ์ดำเนินการ', 'error');
 
             const url = document.getElementById('discordWebhookInput').value.trim();
             const roleId = document.getElementById('discordRoleIdInput').value.trim();
@@ -730,7 +1024,7 @@
             
             addLog(`บันทึกการตั้งค่า Discord Webhook โดย ${currentUser.displayName}`);
             await saveData();
-            alert('บันทึกตั้งค่า Discord เรียบร้อยแล้ว!');
+            showAlertModal('สำเร็จ', 'บันทึกตั้งค่า Discord เรียบร้อยแล้ว!', 'success');
         }
 
         async function register(e) {
@@ -739,12 +1033,12 @@
             const p = document.getElementById('regPass').value.trim();
             const name = document.getElementById('regName').value.trim();
 
-            if (!u || !p || !name) return alert('กรุณากรอกข้อมูลให้ครบทุกช่อง');
-            if (u.length < 3) return alert('Username ต้องมีความยาวอย่างน้อย 3 ตัวอักษร');
+            if (!u || !p || !name) return showAlertModal('เตือน', 'กรุณากรอกข้อมูลให้ครบทุกช่อง', 'error');
+            if (u.length < 3) return showAlertModal('เตือน', 'Username ต้องมีความยาวอย่างน้อย 3 ตัวอักษร', 'error');
 
             await loadData();
             if (appData.users.find(x => x.username.toLowerCase() === u.toLowerCase())) {
-                return alert('Username นี้มีคนใช้แล้ว');
+                return showAlertModal('เตือน', 'Username นี้มีคนใช้แล้ว', 'error');
             }
 
             const assignedRole = appData.users.length === 0 ? 'OWNER' : 'PENDING';
@@ -753,14 +1047,12 @@
                 username: u,
                 password: p,
                 displayName: name,
-                role: assignedRole,
-                customRank: assignedRole === 'PENDING' ? 'รออนุมัติยศ' : '',
-                customColor: 'rose'
+                role: assignedRole
             });
 
             addLog(`สมัครสมาชิกใหม่: ${name} (@${u})`, 'USER');
             await saveData();
-            alert('สมัครสมาชิกเรียบร้อยแล้ว!');
+            showAlertModal('สำเร็จ', 'สมัครสมาชิกเรียบร้อยแล้ว!', 'success');
             switchAuthTab('login');
         }
 
@@ -796,12 +1088,16 @@
                     document.getElementById('pendingNotice').classList.remove('hidden');
                     document.getElementById('tableSection').classList.add('hidden');
                     document.getElementById('expenseSection').classList.add('hidden');
+                    document.getElementById('itemVaultSection').classList.add('hidden');
+                    document.getElementById('moneyWithdrawSection').classList.add('hidden');
                     document.getElementById('adminPanel').classList.add('hidden');
                     document.getElementById('adminNotifBtn').classList.add('hidden');
                 } else {
                     document.getElementById('pendingNotice').classList.add('hidden');
                     document.getElementById('tableSection').classList.remove('hidden');
                     document.getElementById('expenseSection').classList.remove('hidden');
+                    document.getElementById('itemVaultSection').classList.remove('hidden');
+                    document.getElementById('moneyWithdrawSection').classList.remove('hidden');
 
                     if (isAdmin) {
                         document.getElementById('adminPanel').classList.remove('hidden');
@@ -823,11 +1119,14 @@
                 updateGoalProgress();
                 renderTable();
                 renderExpenseTable();
+                renderVaultTable();
+                renderWithdrawRequestsTable();
+                renderMoneyWithdrawRequestsTable();
                 renderMemberList();
                 renderAuditLogs();
 
                 startAutoRefresh();
-            } else { alert('Username หรือ Password ไม่ถูกต้อง'); }
+            } else { showAlertModal('เข้าสู่ระบบไม่สำเร็จ', 'Username หรือ Password ไม่ถูกต้อง', 'error'); }
         }
 
         function logout() { 
@@ -835,16 +1134,15 @@
             location.reload(); 
         }
 
-        // ระบบสร้างรายการเรียกเก็บเงิน (รองรับทั้งกลุ่มและรายบุคคล)
         async function createBill() {
-            if (!isAdminUser()) return alert('เฉพาะ OWNER หรือ ADMIN เท่านั้นที่ออกบิลได้');
+            if (!isAdminUser()) return showAlertModal('เตือน', 'เฉพาะ OWNER หรือ ADMIN เท่านั้นที่ออกบิลได้', 'error');
 
             const targetUsername = document.getElementById('billTargetUser').value;
             const title = document.getElementById('billTitle').value.trim();
             const amount = parseInt(document.getElementById('billAmount').value);
 
             if (!title || isNaN(amount) || amount <= 0) {
-                return alert('กรุณากรอกชื่อรายการและจำนวนเงินที่ถูกต้อง (มากกว่า 0 บาท)');
+                return showAlertModal('เตือน', 'กรุณากรอกชื่อรายการและจำนวนเงินที่ถูกต้อง (มากกว่า 0 บาท)', 'error');
             }
 
             await loadData();
@@ -857,7 +1155,9 @@
                 if (singleUser) targetUsers.push(singleUser);
             }
 
-            if (targetUsers.length === 0) return alert('ไม่พบสมาชิกที่เลือก!');
+            if (targetUsers.length === 0) return showAlertModal('เตือน', 'ไม่พบสมาชิกที่เลือก!', 'error');
+
+            const createdAt = new Date().toLocaleDateString('th-TH') + ' ' + new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
 
             targetUsers.forEach(u => {
                 appData.dues.push({
@@ -866,7 +1166,8 @@
                     displayName: u.displayName,
                     title: title,
                     amount: amount,
-                    status: 'PENDING'
+                    status: 'PENDING',
+                    date: createdAt
                 });
             });
 
@@ -889,18 +1190,18 @@
             renderTable();
             renderAuditLogs();
             
-            alert(targetUsername === 'ALL' ? 'ออกใบเก็บเงินให้สมาชิกทุกคนเรียบร้อย!' : `ออกใบเก็บเงินให้ ${targetUsers[0].displayName} เรียบร้อย!`);
+            showAlertModal('สำเร็จ', targetUsername === 'ALL' ? 'ออกใบเก็บเงินให้สมาชิกทุกคนเรียบร้อย!' : `ออกใบเก็บเงินให้ ${targetUsers[0].displayName} เรียบร้อย!`, 'success');
         }
 
         async function addExpense() {
-            if (!isAdminUser()) return alert('ไม่มีสิทธิ์ดำเนินการ');
+            if (!isAdminUser()) return showAlertModal('เตือน', 'ไม่มีสิทธิ์ดำเนินการ', 'error');
 
             const title = document.getElementById('expenseTitle').value.trim();
             const amount = parseInt(document.getElementById('expenseAmount').value);
             const category = document.getElementById('expenseCategory').value;
 
             if (!title || isNaN(amount) || amount <= 0) {
-                return alert('กรุณากรอกชื่อรายการและจำนวนเงินรายจ่ายให้ถูกต้อง');
+                return showAlertModal('เตือน', 'กรุณากรอกชื่อรายการและจำนวนเงินรายจ่ายให้ถูกต้อง', 'error');
             }
 
             await loadData();
@@ -925,11 +1226,11 @@
             updateAIAnalysis();
             renderExpenseTable();
             renderAuditLogs();
-            alert('บันทึกรายจ่ายเรียบร้อยแล้ว!');
+            showAlertModal('สำเร็จ', 'บันทึกรายจ่ายเรียบร้อยแล้ว!', 'success');
         }
 
         async function deleteExpense(expenseId) {
-            if (!isAdminUser()) return alert('ไม่มีสิทธิ์ดำเนินการ');
+            if (!isAdminUser()) return showAlertModal('เตือน', 'ไม่มีสิทธิ์ดำเนินการ', 'error');
 
             if (confirm('คุณแน่ใจหรือไม่ว่าต้องการลบรายการเบิกจ่ายนี้?')) {
                 const target = appData.expenses.find(e => e.id === expenseId);
@@ -984,14 +1285,482 @@
             });
         }
 
+        // ================= GANG MONEY WITHDRAWAL SYSTEM (ระบบเบิกเงินแก๊ง) =================
+        function openMoneyWithdrawModal() {
+            document.getElementById('moneyWithdrawTitleInput').value = '';
+            document.getElementById('moneyWithdrawAmountInput').value = '';
+            document.getElementById('moneyWithdrawModal').classList.remove('hidden');
+        }
+
+        function closeMoneyWithdrawModal() {
+            document.getElementById('moneyWithdrawModal').classList.add('hidden');
+        }
+
+        async function confirmMoneyWithdraw() {
+            const title = document.getElementById('moneyWithdrawTitleInput').value.trim();
+            const amount = parseInt(document.getElementById('moneyWithdrawAmountInput').value);
+            const category = document.getElementById('moneyWithdrawCategoryInput').value;
+
+            if (!title || isNaN(amount) || amount <= 0) {
+                return showAlertModal('เตือน', 'กรุณากรอกเรื่องที่ขอเบิกและจำนวนเงินให้ถูกต้อง (มากกว่า 0 บาท)', 'error');
+            }
+
+            await loadData();
+            if (!appData.moneyWithdrawRequests) appData.moneyWithdrawRequests = [];
+
+            const reqId = generateUniqueId('mreq');
+            const reqData = {
+                id: reqId,
+                title: title,
+                amount: amount,
+                category: category,
+                requestedBy: currentUser.displayName,
+                requestedByUsername: currentUser.username,
+                status: 'PENDING',
+                date: new Date().toLocaleDateString('th-TH') + ' ' + new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })
+            };
+
+            appData.moneyWithdrawRequests.unshift(reqData);
+
+            addLog(`ส่งคำขอเบิกเงินแก๊ง: "${title}" ยอด ${amount.toLocaleString()} บาท โดย ${currentUser.displayName} (รออนุมัติ)`, 'PAY');
+
+            await saveData();
+            playSound('notif');
+            closeMoneyWithdrawModal();
+            renderMoneyWithdrawRequestsTable();
+            renderAuditLogs();
+            showAlertModal('ยื่นคำขอสำเร็จ', `ส่งคำขอเบิกเงิน ${title} จำนวน ${amount.toLocaleString()} บาท แล้ว! โปรดรอแอดมินกดอนุมัติ`, 'success');
+        }
+
+        async function approveMoneyWithdrawRequest(reqId) {
+            if (!isAdminUser()) return showAlertModal('เตือน', 'ไม่มีสิทธิ์อนุมัติคำขอ', 'error');
+
+            await loadData();
+            const req = appData.moneyWithdrawRequests.find(r => r.id === reqId);
+            if (!req) return showAlertModal('เตือน', 'ไม่พบรายการคำขอนี้', 'error');
+
+            req.status = 'APPROVED';
+            req.approvedBy = currentUser.displayName;
+
+            // บันทึกคำขอเบิกเงินที่อนุมัติแล้วลงในระบบ "รายการเบิกจ่ายของแก๊ง" (Expenses) ทันที
+            if (!appData.expenses) appData.expenses = [];
+            appData.expenses.unshift({
+                id: generateUniqueId('exp'),
+                title: `[เบิกเงิน] ${req.title} (ผู้เบิก: ${req.requestedBy})`,
+                amount: req.amount,
+                category: req.category || '📦 อื่นๆ',
+                recordedBy: currentUser.displayName,
+                date: new Date().toLocaleDateString('th-TH') + ' ' + new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })
+            });
+
+            addLog(`อนุมัติคำขอเบิกเงินแก๊ง: "${req.title}" จำนวน ${req.amount.toLocaleString()} บาท ให้กับ ${req.requestedBy} โดย ${currentUser.displayName}`, 'PAY');
+
+            await saveData();
+            playSound('pay');
+            updateStats();
+            updateAIAnalysis();
+            renderExpenseTable();
+            renderMoneyWithdrawRequestsTable();
+            renderAuditLogs();
+            showAlertModal('อนุมัติสำเร็จ', `อนุมัติคำขอเบิกเงินเรียบร้อยแล้ว ยอดเงินถูกตัดจากคลังเรียบร้อย`, 'success');
+        }
+
+        async function rejectMoneyWithdrawRequest(reqId) {
+            if (!isAdminUser()) return showAlertModal('เตือน', 'ไม่มีสิทธิ์ปฏิเสธคำขอ', 'error');
+
+            await loadData();
+            const req = appData.moneyWithdrawRequests.find(r => r.id === reqId);
+            if (!req) return;
+
+            req.status = 'REJECTED';
+            req.approvedBy = currentUser.displayName;
+
+            addLog(`ปฏิเสธคำขอเบิกเงิน: "${req.title}" จำนวน ${req.amount.toLocaleString()} บาท ของ ${req.requestedBy} โดย ${currentUser.displayName}`, 'PAY');
+
+            await saveData();
+            renderMoneyWithdrawRequestsTable();
+            renderAuditLogs();
+            showAlertModal('ปฏิเสธสำเร็จ', `ปฏิเสธคำขอเบิกเงินเรียบร้อยแล้ว`, 'info');
+        }
+
+        async function deleteMoneyWithdrawRequest(reqId) {
+            if (!isAdminUser()) return showAlertModal('เตือน', 'ไม่มีสิทธิ์ดำเนินการ', 'error');
+
+            if (confirm('คุณแน่ใจหรือไม่ว่าต้องการลบรายการคำขอเบิกเงินนี้?')) {
+                await loadData();
+                const req = appData.moneyWithdrawRequests.find(r => r.id === reqId);
+                if (req) {
+                    addLog(`ลบประวัติคำขอเบิกเงิน: "${req.title}" ของ ${req.requestedBy} โดย ${currentUser.displayName}`, 'PAY');
+                }
+
+                appData.moneyWithdrawRequests = appData.moneyWithdrawRequests.filter(r => r.id !== reqId);
+                await saveData();
+                renderMoneyWithdrawRequestsTable();
+                renderAuditLogs();
+            }
+        }
+
+        function renderMoneyWithdrawRequestsTable() {
+            if (!currentUser || currentUser.role === 'PENDING') return;
+
+            const tbody = document.getElementById('moneyWithdrawRequestsTable');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            const requests = appData.moneyWithdrawRequests || [];
+            const isAdmin = isAdminUser();
+
+            const pendingCount = requests.filter(r => r.status === 'PENDING').length;
+            const badge = document.getElementById('pendingMoneyWithdrawBadge');
+            if (badge) badge.innerText = `${pendingCount} รายการค้าง`;
+
+            if (requests.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-xs text-slate-500">ยังไม่มีประวัติคำขอเบิกเงินแก๊ง</td></tr>`;
+                return;
+            }
+
+            requests.forEach((req, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-800/40 transition";
+
+                let statusBadge = '';
+                if (req.status === 'PENDING') {
+                    statusBadge = `<span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 animate-pulse">⏳ รออนุมัติ</span>`;
+                } else if (req.status === 'APPROVED') {
+                    statusBadge = `<span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">✅ อนุมัติแล้ว</span>`;
+                } else {
+                    statusBadge = `<span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-rose-500/20 text-rose-400 border border-rose-500/30">❌ ถูกปฏิเสธ</span>`;
+                }
+
+                let adminActions = '';
+                if (isAdmin) {
+                    if (req.status === 'PENDING') {
+                        adminActions = `
+                            <div class="flex justify-center items-center gap-1.5">
+                                <button onclick="approveMoneyWithdrawRequest('${req.id}')" title="อนุมัติเงิน" class="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30 text-[11px] font-bold transition">
+                                    <i class="fa-solid fa-check"></i> อนุมัติ
+                                </button>
+                                <button onclick="rejectMoneyWithdrawRequest('${req.id}')" title="ปฏิเสธ" class="px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 text-[11px] font-bold transition">
+                                    <i class="fa-solid fa-xmark"></i> ปฏิเสธ
+                                </button>
+                                <button onclick="deleteMoneyWithdrawRequest('${req.id}')" title="ลบรายการ" class="p-1.5 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/40 hover:bg-rose-500/30 text-[11px] transition">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        `;
+                    } else {
+                        adminActions = `
+                            <div class="flex justify-center items-center gap-1.5">
+                                <button onclick="deleteMoneyWithdrawRequest('${req.id}')" title="ลบรายการ" class="px-2.5 py-1 rounded-lg bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500/20 text-xs transition font-semibold">
+                                    <i class="fa-solid fa-trash"></i> ลบรายการ
+                                </button>
+                            </div>
+                        `;
+                    }
+                } else {
+                    adminActions = `<span class="text-[11px] text-slate-500 font-medium">-</span>`;
+                }
+
+                tr.innerHTML = `
+                    <td class="p-3.5 text-center text-xs text-slate-500 font-semibold">${index + 1}</td>
+                    <td class="p-3.5 text-xs font-bold text-sky-400">${escapeHTML(req.requestedBy)}</td>
+                    <td class="p-3.5 text-xs font-bold text-white">${escapeHTML(req.title)} <span class="text-[10px] text-slate-400 font-normal">(${escapeHTML(req.category || '📦 อื่นๆ')})</span></td>
+                    <td class="p-3.5 text-right text-xs font-black text-rose-400">-${req.amount.toLocaleString()} ฿</td>
+                    <td class="p-3.5 text-center text-[11px] text-slate-500">${escapeHTML(req.date)}</td>
+                    <td class="p-3.5 text-center">${statusBadge}</td>
+                    <td class="p-3.5 text-center">${adminActions}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // ================= ITEM VAULT & WITHDRAWAL SYSTEM =================
+        async function addVaultItem() {
+            if (!isAdminUser()) return showAlertModal('เตือน', 'ไม่มีสิทธิ์ดำเนินการ', 'error');
+
+            const title = document.getElementById('itemTitle').value.trim();
+            const amount = parseInt(document.getElementById('itemAmount').value);
+            const category = document.getElementById('itemCategory').value;
+
+            if (!title || isNaN(amount) || amount <= 0) {
+                return showAlertModal('เตือน', 'กรุณากรอกชื่อไอเทมและจำนวนให้ถูกต้อง', 'error');
+            }
+
+            await loadData();
+            if (!appData.items) appData.items = [];
+
+            const existingItem = appData.items.find(i => i.title.toLowerCase() === title.toLowerCase() && i.category === category);
+            
+            if (existingItem) {
+                existingItem.amount += amount;
+                existingItem.depositedBy = currentUser.displayName;
+                existingItem.date = new Date().toLocaleDateString('th-TH') + ' ' + new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+            } else {
+                appData.items.unshift({
+                    id: generateUniqueId('item'),
+                    title: title,
+                    amount: amount,
+                    category: category,
+                    depositedBy: currentUser.displayName,
+                    date: new Date().toLocaleDateString('th-TH') + ' ' + new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })
+                });
+            }
+
+            document.getElementById('itemTitle').value = '';
+            document.getElementById('itemAmount').value = '';
+
+            addLog(`ฝากไอเทม: "${title}" (${category}) จำนวน ${amount.toLocaleString()} ชิ้น โดย ${currentUser.displayName}`, 'ITEM');
+            await saveData();
+            playSound('notif');
+            
+            renderVaultTable();
+            renderAuditLogs();
+            showAlertModal('สำเร็จ', 'บันทึกการฝากไอเทมเรียบร้อยแล้ว!', 'success');
+        }
+
+        function openWithdrawModal(itemId) {
+            selectedItemForWithdraw = appData.items.find(i => i.id === itemId);
+            if (!selectedItemForWithdraw) return;
+
+            document.getElementById('withdrawItemTitle').innerText = selectedItemForWithdraw.title;
+            document.getElementById('withdrawItemStock').innerText = `${selectedItemForWithdraw.amount.toLocaleString()} ชิ้น`;
+            document.getElementById('withdrawAmountInput').value = '';
+            document.getElementById('withdrawAmountInput').max = selectedItemForWithdraw.amount;
+
+            document.getElementById('withdrawModal').classList.remove('hidden');
+        }
+
+        function closeWithdrawModal() {
+            document.getElementById('withdrawModal').classList.add('hidden');
+            selectedItemForWithdraw = null;
+        }
+
+        async function confirmWithdrawItem() {
+            if (!selectedItemForWithdraw) return;
+
+            const amountInput = document.getElementById('withdrawAmountInput');
+            const withdrawQty = parseInt(amountInput.value);
+
+            if (isNaN(withdrawQty) || withdrawQty <= 0) {
+                return showAlertModal('เตือน', 'กรุณากรอกจำนวนที่ต้องการเบิกให้ถูกต้อง', 'error');
+            }
+
+            if (withdrawQty > selectedItemForWithdraw.amount) {
+                return showAlertModal('เตือน', 'จำนวนที่ขอเบิกมากกว่าจำนวนคงเหลือในคลัง!', 'error');
+            }
+
+            await loadData();
+            if (!appData.withdrawRequests) appData.withdrawRequests = [];
+
+            const reqId = generateUniqueId('req');
+            const reqData = {
+                id: reqId,
+                itemId: selectedItemForWithdraw.id,
+                itemTitle: selectedItemForWithdraw.title,
+                category: selectedItemForWithdraw.category,
+                amount: withdrawQty,
+                requestedBy: currentUser.displayName,
+                requestedByUsername: currentUser.username,
+                status: 'PENDING',
+                date: new Date().toLocaleDateString('th-TH') + ' ' + new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })
+            };
+
+            appData.withdrawRequests.unshift(reqData);
+
+            addLog(`ส่งคำขอเบิกไอเทม: "${selectedItemForWithdraw.title}" จำนวน ${withdrawQty.toLocaleString()} ชิ้น โดย ${currentUser.displayName} (รอการตรวจสอบ)`, 'ITEM');
+
+            await saveData();
+            playSound('notif');
+            closeWithdrawModal();
+            renderWithdrawRequestsTable();
+            renderAuditLogs();
+            showAlertModal('ส่งคำขอสำเร็จ', `ส่งคำขอเบิกไอเทม ${selectedItemForWithdraw.title} จำนวน ${withdrawQty.toLocaleString()} ชิ้น แล้ว! โปรดรอแอดมินกดอนุมัติ`, 'success');
+        }
+
+        async function approveWithdrawRequest(reqId) {
+            if (!isAdminUser()) return showAlertModal('เตือน', 'ไม่มีสิทธิ์อนุมัติคำขอ', 'error');
+
+            await loadData();
+            const req = appData.withdrawRequests.find(r => r.id === reqId);
+            if (!req) return showAlertModal('เตือน', 'ไม่พบรายการคำขอนี้', 'error');
+
+            const item = appData.items.find(i => i.id === req.itemId || i.title.toLowerCase() === req.itemTitle.toLowerCase());
+            if (!item) return showAlertModal('เตือน', 'ไม่พบไอเทมนี้ในคลัง (อาจถูกลบไปแล้ว)', 'error');
+
+            if (req.amount > item.amount) {
+                return showAlertModal('เตือน', `ไม่สามารถอนุมัติได้! จำนวนคงเหลือในคลัง (${item.amount} ชิ้น) ไม่พอสำหรับคำขอ (${req.amount} ชิ้น)`, 'error');
+            }
+
+            item.amount -= req.amount;
+            req.status = 'APPROVED';
+            req.approvedBy = currentUser.displayName;
+
+            if (item.amount <= 0) {
+                appData.items = appData.items.filter(i => i.id !== item.id);
+            }
+
+            addLog(`อนุมัติคำขอเบิกไอเทม: "${req.itemTitle}" จำนวน ${req.amount.toLocaleString()} ชิ้น ให้กับ ${req.requestedBy} โดย ${currentUser.displayName}`, 'ITEM');
+
+            await saveData();
+            playSound('pay');
+            renderVaultTable();
+            renderWithdrawRequestsTable();
+            renderAuditLogs();
+            showAlertModal('อนุมัติสำเร็จ', `อนุมัติคำขอเบิกไอเทมเรียบร้อยแล้ว`, 'success');
+        }
+
+        async function rejectWithdrawRequest(reqId) {
+            if (!isAdminUser()) return showAlertModal('เตือน', 'ไม่มีสิทธิ์ปฏิเสธคำขอ', 'error');
+
+            await loadData();
+            const req = appData.withdrawRequests.find(r => r.id === reqId);
+            if (!req) return;
+
+            req.status = 'REJECTED';
+            req.approvedBy = currentUser.displayName;
+
+            addLog(`ปฏิเสธคำขอเบิกไอเทม: "${req.itemTitle}" จำนวน ${req.amount.toLocaleString()} ชิ้น ของ ${req.requestedBy} โดย ${currentUser.displayName}`, 'ITEM');
+
+            await saveData();
+            renderWithdrawRequestsTable();
+            renderAuditLogs();
+            showAlertModal('ปฏิเสธสำเร็จ', `ปฏิเสธคำขอเบิกไอเทมเรียบร้อยแล้ว`, 'info');
+        }
+
+        async function deleteWithdrawRequest(reqId) {
+            if (!isAdminUser()) return showAlertModal('เตือน', 'ไม่มีสิทธิ์ดำเนินการ', 'error');
+
+            if (confirm('คุณแน่ใจหรือไม่ว่าต้องการลบรายการคำขอเบิกนี้ออกจากระบบ?')) {
+                await loadData();
+                const req = appData.withdrawRequests.find(r => r.id === reqId);
+                if (req) {
+                    addLog(`ลบประวัติคำขอเบิกไอเทม: "${req.itemTitle}" ของ ${req.requestedBy} โดย ${currentUser.displayName}`, 'ITEM');
+                }
+
+                appData.withdrawRequests = appData.withdrawRequests.filter(r => r.id !== reqId);
+                await saveData();
+                renderWithdrawRequestsTable();
+                renderAuditLogs();
+            }
+        }
+
+        function renderVaultTable() {
+            if (!currentUser || currentUser.role === 'PENDING') return;
+
+            const tbody = document.getElementById('itemVaultTable');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            const items = appData.items || [];
+
+            if (items.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-xs text-slate-500">ไม่มีรายการไอเทมในคลังแก๊งขณะนี้</td></tr>`;
+                return;
+            }
+
+            items.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-800/40 transition";
+
+                tr.innerHTML = `
+                    <td class="p-4 text-center text-xs text-slate-500 font-semibold">${index + 1}</td>
+                    <td class="p-4 text-xs font-bold text-amber-300">${escapeHTML(item.category)}</td>
+                    <td class="p-4 text-xs font-bold text-white">${escapeHTML(item.title)}</td>
+                    <td class="p-4 text-right text-xs font-black text-amber-400">${item.amount.toLocaleString()} ชิ้น</td>
+                    <td class="p-4 text-xs text-slate-400">${escapeHTML(item.depositedBy)}</td>
+                    <td class="p-4 text-center text-[11px] text-slate-500">${escapeHTML(item.date)}</td>
+                    <td class="p-4 text-center">
+                        <button onclick="openWithdrawModal('${item.id}')" title="กดขอเบิกไอเทม" class="px-3 py-1.5 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500/20 text-xs font-bold transition flex items-center gap-1.5 mx-auto">
+                            <i class="fa-solid fa-box-open"></i> ขอเบิกไอเทม
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderWithdrawRequestsTable() {
+            if (!currentUser || currentUser.role === 'PENDING') return;
+
+            const tbody = document.getElementById('withdrawRequestsTable');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            const requests = appData.withdrawRequests || [];
+            const isAdmin = isAdminUser();
+
+            const pendingCount = requests.filter(r => r.status === 'PENDING').length;
+            const badge = document.getElementById('pendingWithdrawBadge');
+            if (badge) badge.innerText = `${pendingCount} รายการค้าง`;
+
+            if (requests.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-xs text-slate-500">ยังไม่มีประวัติคำขอเบิกไอเทม</td></tr>`;
+                return;
+            }
+
+            requests.forEach((req, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-800/40 transition";
+
+                let statusBadge = '';
+                if (req.status === 'PENDING') {
+                    statusBadge = `<span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-amber-500/20 text-amber-400 border border-amber-500/30 animate-pulse">⏳ รอตรวจสอบ</span>`;
+                } else if (req.status === 'APPROVED') {
+                    statusBadge = `<span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">✅ อนุมัติแล้ว</span>`;
+                } else {
+                    statusBadge = `<span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-rose-500/20 text-rose-400 border border-rose-500/30">❌ ถูกปฏิเสธ</span>`;
+                }
+
+                let adminActions = '';
+                if (isAdmin) {
+                    if (req.status === 'PENDING') {
+                        adminActions = `
+                            <div class="flex justify-center items-center gap-1.5">
+                                <button onclick="approveWithdrawRequest('${req.id}')" title="อนุมัติ" class="px-2 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30 text-[11px] font-bold transition">
+                                    <i class="fa-solid fa-check"></i> อนุมัติ
+                                </button>
+                                <button onclick="rejectWithdrawRequest('${req.id}')" title="ปฏิเสธ" class="px-2 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 text-[11px] font-bold transition">
+                                    <i class="fa-solid fa-xmark"></i> ปฏิเสธ
+                                </button>
+                                <button onclick="deleteWithdrawRequest('${req.id}')" title="ลบรายการ" class="p-1.5 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/40 hover:bg-rose-500/30 text-[11px] transition">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        `;
+                    } else {
+                        adminActions = `
+                            <div class="flex justify-center items-center gap-1.5">
+                                <button onclick="deleteWithdrawRequest('${req.id}')" title="ลบรายการ" class="px-2.5 py-1 rounded-lg bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500/20 text-xs transition font-semibold">
+                                    <i class="fa-solid fa-trash"></i> ลบรายการ
+                                </button>
+                            </div>
+                        `;
+                    }
+                } else {
+                    adminActions = `<span class="text-[11px] text-slate-500 font-medium">-</span>`;
+                }
+
+                tr.innerHTML = `
+                    <td class="p-3.5 text-center text-xs text-slate-500 font-semibold">${index + 1}</td>
+                    <td class="p-3.5 text-xs font-bold text-sky-400">${escapeHTML(req.requestedBy)}</td>
+                    <td class="p-3.5 text-xs font-bold text-white">${escapeHTML(req.itemTitle)} <span class="text-[10px] text-slate-400 font-normal">(${escapeHTML(req.category)})</span></td>
+                    <td class="p-3.5 text-center text-xs font-black text-amber-400">${req.amount.toLocaleString()} ชิ้น</td>
+                    <td class="p-3.5 text-center text-[11px] text-slate-500">${escapeHTML(req.date)}</td>
+                    <td class="p-3.5 text-center">${statusBadge}</td>
+                    <td class="p-3.5 text-center">${adminActions}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
         async function deleteUser(username) {
-            if (!isAdminUser()) return alert('ไม่มีสิทธิ์ดำเนินการ');
+            if (!isAdminUser()) return showAlertModal('เตือน', 'ไม่มีสิทธิ์ดำเนินการ', 'error');
 
             const target = appData.users.find(u => u.username === username);
             if (!target) return;
 
-            if (target.role === 'OWNER') return alert('ไม่สามารถลบ OWNER ได้!');
-            if (currentUser.role === 'ADMIN' && target.role === 'ADMIN') return alert('ADMIN ไม่สามารถลบ ADMIN ด้วยกันได้!');
+            if (target.role === 'OWNER') return showAlertModal('เตือน', 'ไม่สามารถลบ OWNER ได้!', 'error');
+            if (currentUser.role === 'ADMIN' && target.role === 'ADMIN') return showAlertModal('เตือน', 'ADMIN ไม่สามารถลบ ADMIN ด้วยกันได้!', 'error');
 
             if (confirm(`คุณแน่ใจหรือไม่ว่าต้องการลบสมาชิก "${target.displayName}" (@${target.username}) ออกจากระบบแก๊ง?`)) {
                 appData.users = appData.users.filter(u => u.username !== username);
@@ -1008,12 +1777,12 @@
                 renderTable();
                 renderMemberList();
                 renderAuditLogs();
-                alert('ลบสมาชิกออกจากระบบเรียบร้อยแล้ว!');
+                showAlertModal('สำเร็จ', 'ลบสมาชิกออกจากระบบเรียบร้อยแล้ว!', 'success');
             }
         }
 
         async function setCustomGoal() {
-            if (!isAdminUser()) return alert('เฉพาะ OWNER หรือ ADMIN เท่านั้นที่ปรับเป้าหมายได้');
+            if (!isAdminUser()) return showAlertModal('เตือน', 'เฉพาะ OWNER หรือ ADMIN เท่านั้นที่ปรับเป้าหมายได้', 'error');
 
             const newGoal = prompt('กรอกเป้าหมายยอดเงินคลังแก๊งที่ต้องการ (บาท):', appData.targetGoal || 50000);
             if (newGoal && !isNaN(newGoal) && parseInt(newGoal) > 0) {
@@ -1107,8 +1876,8 @@
                             <p class="font-bold text-white text-xs">${escapeHTML(u.displayName)}</p>
                             <p class="text-[10px] text-slate-500">@${escapeHTML(u.username)}</p>
                         </div>
-                        <button onclick="quickApproveUser('${e(u.username)}')" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-3 py-1.5 rounded-xl text-xs transition">
-                            <i class="fa-solid fa-check"></i> อนุมัติยศ USER
+                        <button onclick="quickApproveUser('${escapeHTML(u.username)}')" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-3 py-1.5 rounded-xl text-xs transition">
+                            <i class="fa-solid fa-check"></i> อนุมัติสิทธิ์ USER
                         </button>
                     `;
                     container.appendChild(item);
@@ -1126,9 +1895,7 @@
             const target = appData.users.find(u => u.username === username);
             if (target) {
                 target.role = 'USER';
-                target.customRank = 'สมาชิกแก๊ง';
-                target.customColor = 'sky';
-                addLog(`อนุมัติยศ USER ให้ ${target.displayName}`, 'USER');
+                addLog(`อนุมัติสิทธิ์ USER ให้ ${target.displayName}`, 'USER');
                 playSound('notif');
                 await saveData();
                 updateNotifications();
@@ -1140,11 +1907,14 @@
         }
 
         async function quickToggleRole(username, newRole) {
-            if (!isOwnerUser()) return alert('เฉพาะ OWNER เท่านั้นที่สามารถเปลี่ยนสิทธิ์ได้ทันที');
+            if (!isAdminUser()) return showAlertModal('เตือน', 'ไม่มีสิทธิ์ปรับเปลี่ยนสิทธิ์', 'error');
             
             const target = appData.users.find(u => u.username === username);
             if (!target) return;
-            if (target.role === 'OWNER') return alert('ไม่สามารถเปลี่ยนสิทธิ์ OWNER ได้');
+            if (target.role === 'OWNER') return showAlertModal('เตือน', 'ไม่สามารถเปลี่ยนสิทธิ์ OWNER ได้', 'error');
+            if (currentUser.role === 'ADMIN' && (newRole === 'OWNER' || newRole === 'ADMIN' || target.role === 'ADMIN')) {
+                return showAlertModal('เตือน', 'ADMIN ไม่สามารถมอบหรือจัดการสิทธิ์ ADMIN/OWNER ได้', 'error');
+            }
 
             target.role = newRole;
             addLog(`ปรับเปลี่ยนระดับสิทธิ์ของ ${target.displayName} เป็น ${newRole}`, 'USER');
@@ -1156,7 +1926,7 @@
         }
 
         async function togglePaid(dueId) {
-            if (!isAdminUser()) return alert('เฉพาะ OWNER หรือ ADMIN เท่านั้นที่กดยืนยันการชำระได้');
+            if (!isAdminUser()) return showAlertModal('เตือน', 'เฉพาะ OWNER หรือ ADMIN เท่านั้นที่กดยืนยันการชำระได้', 'error');
 
             const item = appData.dues.find(d => d.id === dueId);
             if (item) {
@@ -1182,7 +1952,7 @@
         }
 
         async function toggleExempt(dueId) {
-            if (!isAdminUser()) return alert('ไม่มีสิทธิ์ดำเนินการ');
+            if (!isAdminUser()) return showAlertModal('เตือน', 'ไม่มีสิทธิ์ดำเนินการ', 'error');
 
             const item = appData.dues.find(d => d.id === dueId);
             if (item) {
@@ -1200,7 +1970,7 @@
         }
 
         async function deleteBill(dueId) {
-            if (!isAdminUser()) return alert('ไม่มีสิทธิ์ดำเนินการ');
+            if (!isAdminUser()) return showAlertModal('เตือน', 'ไม่มีสิทธิ์ดำเนินการ', 'error');
 
             if (confirm('คุณแน่ใจหรือไม่ว่าต้องการลบบิลนี้?')) {
                 const item = appData.dues.find(d => d.id === dueId);
@@ -1225,14 +1995,14 @@
             if (!selectedTargetUser) return;
 
             document.getElementById('rankModalTargetUser').innerText = `${selectedTargetUser.displayName} (@${selectedTargetUser.username})`;
-            document.getElementById('customRankInput').value = selectedTargetUser.customRank || '';
-            document.getElementById('customRankColor').value = selectedTargetUser.customColor || 'sky';
+            document.getElementById('editDisplayNameInput').value = selectedTargetUser.displayName || '';
 
-            if (isOwnerUser()) {
-                document.getElementById('roleSelectorContainer').classList.remove('hidden');
+            const roleSelectorContainer = document.getElementById('roleSelectorContainer');
+            if (isAdminUser()) {
+                roleSelectorContainer.classList.remove('hidden');
                 document.getElementById('userRoleSelect').value = selectedTargetUser.role;
             } else {
-                document.getElementById('roleSelectorContainer').classList.add('hidden');
+                roleSelectorContainer.classList.add('hidden');
             }
 
             document.getElementById('rankModal').classList.remove('hidden');
@@ -1243,22 +2013,42 @@
         async function saveUserRank() {
             if (!isAdminUser() || !selectedTargetUser) return;
 
-            selectedTargetUser.customRank = document.getElementById('customRankInput').value.trim();
-            selectedTargetUser.customColor = document.getElementById('customRankColor').value;
+            const newDisplayName = document.getElementById('editDisplayNameInput').value.trim();
+            if (!newDisplayName) return showAlertModal('เตือน', 'กรุณาระบุชื่อที่แสดง', 'error');
 
-            if (isOwnerUser()) {
-                selectedTargetUser.role = document.getElementById('userRoleSelect').value;
+            const oldName = selectedTargetUser.displayName;
+            selectedTargetUser.displayName = newDisplayName;
+            
+            appData.dues.forEach(d => {
+                if (d.username === selectedTargetUser.username) {
+                    d.displayName = newDisplayName;
+                }
+            });
+
+            if (currentUser && currentUser.username === selectedTargetUser.username) {
+                currentUser.displayName = newDisplayName;
+                document.getElementById('navDisplayName').innerText = newDisplayName;
             }
 
-            addLog(`ปรับแต่งยศ/สิทธิ์: ${selectedTargetUser.displayName}`, 'USER');
+            if (isAdminUser()) {
+                const newRole = document.getElementById('userRoleSelect').value;
+                if (selectedTargetUser.role !== 'OWNER' || isOwnerUser()) {
+                    if (!(currentUser.role === 'ADMIN' && (newRole === 'OWNER' || newRole === 'ADMIN' || selectedTargetUser.role === 'ADMIN'))) {
+                        selectedTargetUser.role = newRole;
+                    }
+                }
+            }
+
+            addLog(`แก้ไขข้อมูล/สิทธิ์สมาชิก: ${oldName} -> ${newDisplayName}`, 'USER');
+            
+            await saveData();
             closeRankModal();
             updateStats();
             updateNotifications();
             renderTable();
             renderMemberList();
             renderAuditLogs();
-            await saveData();
-            alert('บันทึกยศเรียบร้อยแล้ว!');
+            showAlertModal('สำเร็จ', 'บันทึกข้อมูลเรียบร้อยแล้ว!', 'success');
         }
 
         function updateStats() {
@@ -1331,22 +2121,36 @@
 
         async function sendDiscordNotification() {
             if (!isAdminUser()) {
-                return alert('เฉพาะ ADMIN หรือ OWNER เท่านั้นที่สามารถส่งทวงหนี้ลง Discord ได้!');
+                return showAlertModal('เตือน', 'เฉพาะ ADMIN หรือ OWNER เท่านั้นที่สามารถส่งทวงหนี้ลง Discord ได้!', 'error');
             }
 
             const webhookUrl = appData.discordWebhook || localStorage.getItem('DISCORD_WEBHOOK') || '';
             const roleId = appData.discordRoleId || localStorage.getItem('DISCORD_ROLE_ID') || '';
 
-            if (!webhookUrl) return alert('กรุณาใส่ Discord Webhook URL ในส่วนของ Admin แล้วกดบันทึกก่อนครับ!');
+            if (!webhookUrl) return showAlertModal('เตือน', 'กรุณาใส่ Discord Webhook URL ในส่วนของ Admin แล้วกดบันทึกก่อนครับ!', 'error');
 
             const pendingDues = appData.dues.filter(d => d.status === 'PENDING' || !d.status);
-            if (pendingDues.length === 0) return alert('ไม่มีรายการค้างชำระในขณะนี้ 🎉');
+            if (pendingDues.length === 0) return showAlertModal('แจ้งเตือน', 'ไม่มีรายการค้างชำระในขณะนี้ 🎉', 'info');
+
+            const userDebtSummary = {};
+            let grandTotal = 0;
+
+            pendingDues.forEach(d => {
+                if (!userDebtSummary[d.displayName]) {
+                    userDebtSummary[d.displayName] = { total: 0, items: [] };
+                }
+                userDebtSummary[d.displayName].total += d.amount;
+                userDebtSummary[d.displayName].items.push(`${d.title} (${d.amount.toLocaleString()} ฿)`);
+                grandTotal += d.amount;
+            });
 
             let debtText = "";
-            let totalAmount = 0;
-            pendingDues.forEach((d, index) => {
-                debtText += `**${index + 1}. ${escapeHTML(d.displayName)}**\n↳ รายการ: *${escapeHTML(d.title)}* | ยอด: \`${d.amount.toLocaleString()} บาท\`\n\n`;
-                totalAmount += d.amount;
+            let idx = 1;
+            Object.keys(userDebtSummary).forEach(name => {
+                const info = userDebtSummary[name];
+                debtText += `**${idx}. ${escapeHTML(name)}** — ยอดค้างชำระ: \`${info.total.toLocaleString()} บาท\`\n`;
+                debtText += `↳ *รายการ: ${info.items.join(', ')}*\n\n`;
+                idx++;
             });
 
             const roleMention = roleId ? `<@&${roleId}> ` : '';
@@ -1356,13 +2160,13 @@
                 avatar_url: "https://cdn-icons-png.flaticon.com/512/2489/2489756.png",
                 content: `${roleMention}🚨 **ประกาศแจ้งเตือนค้างชำระเงินคลังประจำสัปดาห์!**`,
                 embeds: [{
-                    title: "📋 รายการค้างชำระที่ต้องดำเนินการด่วน",
+                    title: "📋 สรุปยอดค้างชำระเงินคลังรายบุคคลทั้งหมด",
                     description: "กรุณาตรวจสอบรายชื่อและชำระเงินเข้าคลังแก๊งตามรายการด้านล่างเพื่อรักษาสิทธิ์ครับ! 🔥",
                     color: 15158332,
                     fields: [
-                        { name: "📌 รายชื่อสมาชิกและยอดค้างชำระ", value: debtText || "ไม่มีรายการค้างชำระ", inline: false },
-                        { name: "💰 ยอดค้างรวมทั้งหมด", value: `\`\`\`yaml\n${totalAmount.toLocaleString()} บาท\n\`\`\``, inline: true },
-                        { name: "📊 จำนวนคนดองเงิน", value: `\`\`\`yaml\n${pendingDues.length} รายการ\n\`\`\``, inline: true }
+                        { name: "📌 รายชื่อสมาชิกและสรุปยอดค้างรวม", value: debtText || "ไม่มีรายการค้างชำระ", inline: false },
+                        { name: "💰 ยอดค้างรวมทั้งหมดในคลัง", value: `\`\`\`yaml\n${grandTotal.toLocaleString()} บาท\n\`\`\``, inline: true },
+                        { name: "👥 จำนวนคนที่มีรายการค้าง", value: `\`\`\`yaml\n${Object.keys(userDebtSummary).length} คน\n\`\`\``, inline: true }
                     ],
                     footer: { text: "หากชำระแล้วกรุณาแจ้งแอดมินเพื่ออัปเดตสถานะ | GANG TREASURY PRO" },
                     timestamp: new Date().toISOString()
@@ -1375,14 +2179,14 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(embedData)
                 });
-                if (res.ok) alert('ส่งข้อความทวงหนี้ไปยัง Discord เรียบร้อย! 🚀');
-                else alert('ส่งไม่สำเร็จ ตรวจสอบ Webhook URL อีกครั้ง');
-            } catch (err) { alert('เกิดข้อผิดพลาดในการส่ง Webhook'); }
+                if (res.ok) showAlertModal('สำเร็จ', 'ส่งข้อความทวงหนี้ไปยัง Discord เรียบร้อย! 🚀', 'success');
+                else showAlertModal('ผิดพลาด', 'ส่งไม่สำเร็จ ตรวจสอบ Webhook URL อีกครั้ง', 'error');
+            } catch (err) { showAlertModal('ผิดพลาด', 'เกิดข้อผิดพลาดในการส่ง Webhook', 'error'); }
         }
 
         async function sendDiscordAuditReport() {
             const webhookUrl = appData.discordWebhook || localStorage.getItem('DISCORD_WEBHOOK') || '';
-            if (!webhookUrl) return alert('กรุณาใส่ Discord Webhook URL ในส่วนของ Admin แล้วกดบันทึกก่อนครับ!');
+            if (!webhookUrl) return showAlertModal('เตือน', 'กรุณาใส่ Discord Webhook URL ในส่วนของ Admin แล้วกดบันทึกก่อนครับ!', 'error');
 
             const dues = appData.dues || [];
             const expenses = appData.expenses || [];
@@ -1416,8 +2220,8 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(embedData)
                 });
-                alert('ส่งรายงานสรุปคลังเข้า Discord เรียบร้อยแล้ว!');
-            } catch (err) { alert('เกิดข้อผิดพลาดในการส่ง Webhook'); }
+                showAlertModal('สำเร็จ', 'ส่งรายงานสรุปคลังเข้า Discord เรียบร้อยแล้ว!', 'success');
+            } catch (err) { showAlertModal('ผิดพลาด', 'เกิดข้อผิดพลาดในการส่ง Webhook', 'error'); }
         }
 
         function getUserBadge(username) {
@@ -1425,21 +2229,10 @@
             if (!user) return '';
 
             let roleBadge = '';
-            if (user.role === 'OWNER') roleBadge = `<span class="text-[9px] bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2 py-0.5 rounded-full font-black mr-1">👑 OWNER</span>`;
-            else if (user.role === 'ADMIN') roleBadge = `<span class="text-[9px] bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 px-2 py-0.5 rounded-full font-black mr-1">🛡️ ADMIN</span>`;
-            else if (user.role === 'PENDING') roleBadge = `<span class="text-[9px] bg-rose-500/20 text-rose-300 border border-rose-500/40 px-2 py-0.5 rounded-full font-black mr-1">⏳ รออนุมัติ</span>`;
-
-            if (user.customRank) {
-                const colorMap = {
-                    amber: 'bg-amber-500/10 text-amber-400 border-amber-500/30',
-                    sky: 'bg-sky-500/10 text-sky-400 border-sky-500/30',
-                    emerald: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
-                    rose: 'bg-rose-500/10 text-rose-400 border-rose-500/30',
-                    purple: 'bg-purple-500/10 text-purple-400 border-purple-500/30'
-                };
-                const cls = colorMap[user.customColor] || colorMap.sky;
-                return `${roleBadge}<span class="text-[10px] ${cls} px-2 py-0.5 rounded-md border font-bold">✨ ${escapeHTML(user.customRank)}</span>`;
-            }
+            if (user.role === 'OWNER') roleBadge = `<span class="text-[9px] bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2 py-0.5 rounded-full font-black">👑 OWNER</span>`;
+            else if (user.role === 'ADMIN') roleBadge = `<span class="text-[9px] bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 px-2 py-0.5 rounded-full font-black">🛡️ ADMIN</span>`;
+            else if (user.role === 'PENDING') roleBadge = `<span class="text-[9px] bg-rose-500/20 text-rose-300 border border-rose-500/40 px-2 py-0.5 rounded-full font-black">⏳ รออนุมัติ</span>`;
+            else roleBadge = `<span class="text-[9px] bg-sky-500/20 text-sky-300 border border-sky-500/40 px-2 py-0.5 rounded-full font-black">👤 USER</span>`;
 
             return roleBadge;
         }
@@ -1457,7 +2250,6 @@
             document.getElementById('countUser').innerText = users.filter(u => u.role === 'USER').length;
             document.getElementById('countPending').innerText = users.filter(u => u.role === 'PENDING').length;
 
-            // อัปเดต Dropdown เลือกสมาชิกสำหรับออกบิลรายบุคคล
             const billTargetSelect = document.getElementById('billTargetUser');
             if (billTargetSelect) {
                 const currentSelected = billTargetSelect.value;
@@ -1483,7 +2275,7 @@
             });
 
             if (filteredUsers.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-xs text-slate-500">ไม่พบข้อมูลสมาชิกตรงตามเงื่อนไข</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-xs text-slate-500">ไม่พบข้อมูลสมาชิกตรงตามเงื่อนไข</td></tr>`;
                 return;
             }
 
@@ -1495,40 +2287,23 @@
                 if (u.role === 'OWNER') roleBadgeColor = "text-amber-400 font-extrabold";
                 else if (u.role === 'ADMIN') roleBadgeColor = "text-indigo-400 font-bold";
                 else if (u.role === 'USER') roleBadgeColor = "text-sky-400 font-semibold";
-                else if (u.role === 'PENDING') roleBadgeColor = "text-rose-400 font-semibold";
-
-                let quickActionBtns = '';
-                if (isOwnerUser() && u.role !== 'OWNER') {
-                    if (u.role === 'ADMIN') {
-                        quickActionBtns = `<button onclick="quickToggleRole('${escapeHTML(u.username)}', 'USER')" title="ลดสิทธิ์เป็น USER" class="p-1.5 rounded-lg bg-sky-500/10 text-sky-400 border border-sky-500/20 hover:bg-sky-500/20 text-xs transition">
-                            <i class="fa-solid fa-arrow-down-long"></i> USER
-                        </button>`;
-                    } else if (u.role === 'USER') {
-                        quickActionBtns = `<button onclick="quickToggleRole('${escapeHTML(u.username)}', 'ADMIN')" title="เพิ่มสิทธิ์เป็น ADMIN" class="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 hover:bg-indigo-500/20 text-xs transition">
-                            <i class="fa-solid fa-arrow-up-long"></i> ADMIN
-                        </button>`;
-                    } else if (u.role === 'PENDING') {
-                        quickActionBtns = `<button onclick="quickApproveUser('${escapeHTML(u.username)}')" title="อนุมัติยศ" class="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 text-xs transition">
-                            <i class="fa-solid fa-check"></i> อนุมัติ
-                        </button>`;
-                    }
-                }
+                else if (u.role === 'PENDING') roleBadgeColor = "text-rose-400 font-medium";
 
                 tr.innerHTML = `
                     <td class="p-3.5 text-center text-xs text-slate-500 font-semibold">${index + 1}</td>
-                    <td class="p-3.5 font-bold text-white text-xs">${escapeHTML(u.displayName)}</td>
-                    <td class="p-3.5 text-slate-400 text-xs">@${escapeHTML(u.username)}</td>
-                    <td class="p-3.5 text-xs ${roleBadgeColor}">${escapeHTML(u.role)}</td>
-                    <td class="p-3.5 text-xs">${getUserBadge(u.username)}</td>
+                    <td class="p-3.5 text-xs font-bold text-white">${escapeHTML(u.displayName)}</td>
+                    <td class="p-3.5 text-xs text-slate-400">@${escapeHTML(u.username)}</td>
+                    <td class="p-3.5 text-xs ${roleBadgeColor}">${u.role}</td>
                     <td class="p-3.5 text-center">
-                        <div class="flex justify-center items-center gap-1.5">
-                            ${quickActionBtns}
-                            <button onclick="openRankModal('${escapeHTML(u.username)}')" title="แก้ไขยศ/สิทธิ์" class="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 px-2.5 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1">
-                                <i class="fa-solid fa-pen-to-square"></i> แต่งยศ
+                        <div class="flex items-center justify-center gap-2">
+                            <button onclick="openRankModal('${escapeHTML(u.username)}')" title="ตั้งค่าสิทธิ์" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 rounded-xl text-xs font-bold transition">
+                                <i class="fa-solid fa-gear"></i> จัดการ
                             </button>
-                            <button onclick="deleteUser('${escapeHTML(u.username)}')" title="ลบสมาชิก" class="bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 px-2.5 py-1.5 rounded-xl text-xs font-semibold transition">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
+                            ${u.role !== 'OWNER' ? `
+                                <button onclick="deleteUser('${escapeHTML(u.username)}')" title="ลบสมาชิก" class="p-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-xl text-xs transition">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            ` : ''}
                         </div>
                     </td>
                 `;
@@ -1538,189 +2313,158 @@
 
         function setLogFilter(filter) {
             currentLogFilter = filter;
-            document.getElementById('logFilterAll').className = filter === 'ALL' ? "px-3 py-1 rounded-xl bg-slate-800 text-indigo-400 shadow" : "px-3 py-1 rounded-xl text-slate-400 hover:text-indigo-400 transition";
-            document.getElementById('logFilterPay').className = filter === 'PAY' ? "px-3 py-1 rounded-xl bg-slate-800 text-emerald-400 shadow" : "px-3 py-1 rounded-xl text-slate-400 hover:text-emerald-400 transition";
-            document.getElementById('logFilterBill').className = filter === 'BILL' ? "px-3 py-1 rounded-xl bg-slate-800 text-sky-400 shadow" : "px-3 py-1 rounded-xl text-slate-400 hover:text-sky-400 transition";
-            document.getElementById('logFilterUser').className = filter === 'USER' ? "px-3 py-1 rounded-xl bg-slate-800 text-amber-400 shadow" : "px-3 py-1 rounded-xl text-slate-400 hover:text-amber-400 transition";
+            ['All', 'Pay', 'Bill', 'Item', 'User'].forEach(f => {
+                const btn = document.getElementById(`logFilter${f}`);
+                if (btn) {
+                    if (f.toUpperCase() === filter) {
+                        btn.className = "px-3 py-1 rounded-xl bg-slate-800 text-indigo-400 shadow";
+                    } else {
+                        btn.className = "px-3 py-1 rounded-xl text-slate-400 hover:text-indigo-300 transition";
+                    }
+                }
+            });
             renderAuditLogs();
         }
 
         function renderAuditLogs() {
+            if (!currentUser || !isAdminUser()) return;
+
             const container = document.getElementById('auditLogList');
-            if (!container) return;
             container.innerHTML = '';
 
-            const searchInput = document.getElementById('logSearchInput');
-            const search = searchInput ? searchInput.value.toLowerCase() : '';
-            let logs = appData.logs || [];
+            const logs = appData.logs || [];
+            const search = document.getElementById('logSearchInput') ? document.getElementById('logSearchInput').value.toLowerCase() : '';
 
-            if (currentLogFilter === 'PAY') {
-                logs = logs.filter(l => l.category === 'PAY' || l.action.includes('ชำระ') || l.action.includes('เบิก') || l.action.includes('จ่าย'));
-            } else if (currentLogFilter === 'BILL') {
-                logs = logs.filter(l => l.category === 'BILL' || l.action.includes('ใบทวง') || l.action.includes('บิล'));
-            } else if (currentLogFilter === 'USER') {
-                logs = logs.filter(l => l.category === 'USER' || l.action.includes('สมาชิก') || l.action.includes('อนุมัติ') || l.action.includes('ยศ'));
-            }
-
-            const filteredLogs = logs.filter(l => 
-                l.action.toLowerCase().includes(search) || 
-                l.time.toLowerCase().includes(search)
-            );
+            const filteredLogs = logs.filter(l => {
+                const matchSearch = l.action.toLowerCase().includes(search) || l.time.toLowerCase().includes(search);
+                const matchCat = currentLogFilter === 'ALL' || l.category === currentLogFilter;
+                return matchSearch && matchCat;
+            });
 
             if (filteredLogs.length === 0) {
-                container.innerHTML = `<p class="text-[11px] text-slate-500 text-center py-4">ไม่พบประวัติกิจกรรมที่ตรงตามเงื่อนไข</p>`;
+                container.innerHTML = `<p class="text-xs text-slate-500 text-center py-6">ไม่มีประวัติกิจกรรมตรงตามเงื่อนไข</p>`;
                 return;
             }
 
             filteredLogs.forEach(l => {
-                let tagClass = "bg-slate-800 text-slate-300 border-slate-700";
-                let tagText = "ทั่วไป";
+                const item = document.createElement('div');
+                item.className = "p-2.5 bg-slate-950/60 rounded-xl border border-slate-800/80 flex items-center justify-between gap-3";
 
-                if (l.action.includes('ยืนยันการชำระ') || l.action.includes('อนุมัติ')) {
-                    tagClass = "bg-emerald-500/10 text-emerald-400 border-emerald-500/30";
-                    tagText = "อนุมัติ";
-                } else if (l.action.includes('ลบ') || l.action.includes('ยกเลิก')) {
-                    tagClass = "bg-rose-500/10 text-rose-400 border-rose-500/30";
-                    tagText = "ลบ/ยกเลิก";
-                } else if (l.action.includes('บันทึกรายจ่าย')) {
-                    tagClass = "bg-purple-500/10 text-purple-400 border-purple-500/30";
-                    tagText = "รายจ่าย";
-                } else if (l.action.includes('ออกใบทวง')) {
-                    tagClass = "bg-sky-500/10 text-sky-400 border-sky-500/30";
-                    tagText = "สร้างบิล";
-                } else if (l.action.includes('ยศ') || l.action.includes('สิทธิ์')) {
-                    tagClass = "bg-amber-500/10 text-amber-400 border-amber-500/30";
-                    tagText = "สิทธิ์";
-                }
+                let catColor = "text-indigo-400";
+                if (l.category === 'PAY') catColor = "text-emerald-400";
+                else if (l.category === 'BILL') catColor = "text-sky-400";
+                else if (l.category === 'ITEM') catColor = "text-amber-400";
+                else if (l.category === 'USER') catColor = "text-purple-400";
 
-                const div = document.createElement('div');
-                div.className = "bg-slate-950/70 hover:bg-slate-900/80 p-3 rounded-2xl border border-slate-800/80 flex flex-col sm:flex-row justify-between sm:items-center gap-2 transition";
-                div.innerHTML = `
-                    <div class="flex items-center gap-2.5">
-                        <span class="text-[9px] px-2 py-0.5 rounded-md border font-black ${tagClass}">${tagText}</span>
-                        <span class="text-slate-200 text-xs font-medium">${escapeHTML(l.action)}</span>
+                item.innerHTML = `
+                    <div class="flex items-center gap-2 overflow-hidden">
+                        <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-md bg-slate-900 ${catColor} border border-slate-800 flex-shrink-0">${l.category || 'SYS'}</span>
+                        <span class="text-xs text-slate-200 truncate">${escapeHTML(l.action)}</span>
                     </div>
-                    <span class="text-[10px] text-slate-500 flex items-center gap-1 self-end sm:self-center">
-                        <i class="fa-regular fa-clock text-[9px]"></i> ${escapeHTML(l.time)}
-                    </span>
+                    <span class="text-[10px] text-slate-500 flex-shrink-0">${escapeHTML(l.time)}</span>
                 `;
-                container.appendChild(div);
+                container.appendChild(item);
             });
-        }
-
-        async function clearAuditLogs() {
-            if (!isAdminUser()) return alert('เฉพาะ ADMIN/OWNER เท่านั้นที่ล้าง Log ได้');
-
-            if (confirm('คุณแน่ใจหรือไม่ว่าต้องการล้างประวัติกิจกรรมทั้งหมด?')) {
-                appData.logs = [];
-                addLog(`ล้างประวัติกิจกรรมทั้งหมด โดย ${currentUser.displayName}`);
-                await saveData();
-                renderAuditLogs();
-                alert('ล้างประวัติกิจกรรมเรียบร้อยแล้ว!');
-            }
         }
 
         function downloadLogs() {
+            if (!isAdminUser()) return;
             const logs = appData.logs || [];
-            if (logs.length === 0) return alert('ไม่มีข้อมูล Log ให้ดาวน์โหลด');
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFFTime,Category,Action\n";
 
-            let csvContent = "\uFEFFลำดับ,ข้อความกิจกรรม,วันที่และเวลา\n";
-            logs.forEach((l, index) => {
-                csvContent += `"${index + 1}","${l.action.replace(/"/g, '""')}","${l.time}"\n`;
+            logs.forEach(l => {
+                csvContent += `"${l.time}","${l.category || 'SYS'}","${l.action.replace(/"/g, '""')}"\n`;
             });
 
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', `gang_audit_logs_${Date.now()}.csv`);
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `gang_treasury_logs_${Date.now()}.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+        }
+
+        async function clearAuditLogs() {
+            if (!isAdminUser()) return;
+            if (confirm('คุณแน่ใจหรือไม่ว่าต้องการล้าง Log กิจกรรมทั้งหมด?')) {
+                appData.logs = [];
+                await saveData();
+                renderAuditLogs();
+                showAlertModal('สำเร็จ', 'ล้าง Log กิจกรรมเรียบร้อยแล้ว!', 'success');
+            }
         }
 
         function renderTable() {
             if (!currentUser || currentUser.role === 'PENDING') return;
 
             const tbody = document.getElementById('duesTable');
-            const search = document.getElementById('searchInput').value.toLowerCase();
             tbody.innerHTML = '';
 
-            let list = appData.dues || [];
-
-            if (currentUser.role === 'USER') {
-                list = list.filter(d => d.username === currentUser.username);
-            }
-
-            if (currentFilter === 'PAID') {
-                list = list.filter(d => d.status === 'PAID');
-            } else if (currentFilter === 'PENDING') {
-                list = list.filter(d => d.status === 'PENDING' || !d.status);
-            }
-
-            const filtered = list.filter(d => 
-                d.displayName.toLowerCase().includes(search) || 
-                d.title.toLowerCase().includes(search)
-            );
-
+            const dues = appData.dues || [];
+            const search = document.getElementById('searchInput') ? document.getElementById('searchInput').value.toLowerCase() : '';
             const isAdmin = isAdminUser();
 
-            if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="${isAdmin ? 6 : 5}" class="p-6 text-center text-xs text-slate-500">ยังไม่มีรายการชำระเงิน</td></tr>`;
+            const filteredDues = dues.filter(d => {
+                const matchSearch = d.displayName.toLowerCase().includes(search) || d.title.toLowerCase().includes(search);
+                const matchStatus = currentFilter === 'ALL' || d.status === currentFilter;
+                return matchSearch && matchStatus;
+            });
+
+            if (filteredDues.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="${isAdmin ? 7 : 6}" class="p-6 text-center text-xs text-slate-500">ไม่พบรายการเก็บเงินในระบบ</td></tr>`;
                 return;
             }
 
-            filtered.forEach((d, index) => {
-                const row = document.createElement('tr');
-                row.className = "hover:bg-slate-800/40 transition";
-                
-                let statusBtn = '';
-                const currentStatus = d.status || 'PENDING';
+            filteredDues.forEach((d, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-800/40 transition";
 
-                if (currentStatus === 'PAID') {
-                    statusBtn = `<button onclick="togglePaid('${d.id}')" class="px-3.5 py-1.5 rounded-2xl text-xs font-extrabold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 transition">
-                        <i class="fa-solid fa-check"></i> จ่ายแล้ว
-                    </button>`;
-                } else if (currentStatus === 'EXEMPTED') {
-                    statusBtn = `<button onclick="toggleExempt('${d.id}')" class="px-3.5 py-1.5 rounded-2xl text-xs font-extrabold bg-slate-800 text-slate-400 border border-slate-700 hover:bg-slate-700 transition">
-                        <i class="fa-solid fa-ban"></i> ยกเว้น
-                    </button>`;
+                let statusBadge = '';
+                if (d.status === 'PAID') {
+                    statusBadge = `<span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">✅ จ่ายแล้ว</span>`;
+                } else if (d.status === 'EXEMPTED') {
+                    statusBadge = `<span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-slate-800 text-slate-400 border border-slate-700">🚫 ยกเว้น</span>`;
                 } else {
-                    statusBtn = `<button onclick="togglePaid('${d.id}')" class="px-3.5 py-1.5 rounded-2xl text-xs font-extrabold bg-rose-500/10 text-rose-400 border border-rose-500/30 hover:bg-rose-500/20 transition">
-                        <i class="fa-solid fa-xmark"></i> ยังไม่จ่าย
-                    </button>`;
+                    statusBadge = `<span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-rose-500/20 text-rose-400 border border-rose-500/30 animate-pulse">⏳ ยังไม่จ่าย</span>`;
                 }
 
-                const adminActions = isAdmin ? `
-                    <td class="p-4 text-center">
-                        <div class="flex items-center justify-center gap-2">
-                            <button onclick="openRankModal('${escapeHTML(d.username)}')" title="แต่งตั้งยศ" class="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 text-xs transition flex items-center justify-center">
-                                <i class="fa-solid fa-crown"></i>
-                            </button>
-                            <button onclick="toggleExempt('${d.id}')" title="เว้นการชำระเงิน" class="w-8 h-8 rounded-xl bg-sky-500/10 text-sky-400 border border-sky-500/20 hover:bg-sky-500/20 text-xs transition flex items-center justify-center">
-                                <i class="fa-solid fa-forward"></i>
-                            </button>
-                            <button onclick="deleteBill('${d.id}')" title="ลบบิล" class="w-8 h-8 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500/20 text-xs transition flex items-center justify-center">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                        </div>
-                    </td>
-                ` : '';
+                let adminActions = '';
+                if (isAdmin) {
+                    adminActions = `
+                        <td class="p-4 text-center">
+                            <div class="flex items-center justify-center gap-1.5">
+                                <button onclick="togglePaid('${d.id}')" title="${d.status === 'PAID' ? 'ยกเลิกจ่ายเงิน' : 'ยืนยันจ่ายเงิน'}" class="p-2 rounded-xl ${d.status === 'PAID' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20'} text-xs transition">
+                                    <i class="fa-solid ${d.status === 'PAID' ? 'fa-rotate-left' : 'fa-check'}"></i>
+                                </button>
+                                <button onclick="toggleExempt('${d.id}')" title="ยกเว้นบิล" class="p-2 rounded-xl bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 text-xs transition">
+                                    <i class="fa-solid fa-ban"></i>
+                                </button>
+                                <button onclick="deleteBill('${d.id}')" title="ลบบิล" class="p-2 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500/20 text-xs transition">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                }
 
-                row.innerHTML = `
+                tr.innerHTML = `
                     <td class="p-4 text-center text-xs text-slate-500 font-semibold">${index + 1}</td>
-                    <td class="p-4">
-                        <div class="font-bold text-white text-xs">${escapeHTML(d.displayName)}</div>
-                        <div class="mt-1">${getUserBadge(d.username)}</div>
+                    <td class="p-4 text-xs font-bold text-white flex items-center gap-2">
+                        ${escapeHTML(d.displayName)}
+                        ${getUserBadge(d.username)}
                     </td>
-                    <td class="p-4 text-slate-300 text-xs font-medium">${escapeHTML(d.title)}</td>
-                    <td class="p-4 text-right font-black ${currentStatus === 'EXEMPTED' ? 'line-through text-slate-500' : 'text-sky-400'}">${d.amount.toLocaleString()} ฿</td>
-                    <td class="p-4 text-center">${statusBtn}</td>
+                    <td class="p-4 text-xs font-semibold text-slate-300">${escapeHTML(d.title)}</td>
+                    <td class="p-4 text-center text-[11px] text-slate-500">${escapeHTML(d.date || '-')}</td>
+                    <td class="p-4 text-right text-xs font-black text-amber-400">${d.amount.toLocaleString()} ฿</td>
+                    <td class="p-4 text-center">${statusBadge}</td>
                     ${adminActions}
                 `;
-                tbody.appendChild(row);
+                tbody.appendChild(tr);
             });
         }
+
+        window.onload = () => { loadData(false); };
     </script>
 </body>
 </html>
